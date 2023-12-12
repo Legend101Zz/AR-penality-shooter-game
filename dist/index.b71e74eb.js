@@ -570,35 +570,35 @@ const ballTexture = new _three.TextureLoader().load(footImg);
 const ball = new _three.Mesh(new _three.SphereBufferGeometry(1, 32, 32), new _three.MeshBasicMaterial({
     map: ballTexture
 }));
-ball.position.set(0, 0, -20); // Adjust the position along the z-axis
+ball.position.set(0, 0, -2); // Adjust the position along the z-axis
 trackerGroup.add(ball);
 const gltfLoader = new (0, _gltfloader.GLTFLoader)(manager);
 gltfLoader.load(model, (gltf)=>{
     gloveModel = gltf.scene;
-    gltf.scene.scale.set(2, 2, 2);
-    gltf.scene.position.set(0, -0.7, 1);
-    gltf.scene.rotation.set(0, 0, 0);
+    gltf.scene.scale.set(1, 1, 1);
+    gltf.scene.position.set(0, -0.7, -10);
+    gltf.scene.rotation.set(0, -Math.PI / 2, 0);
     // Add the scene to the tracker group
     gltf.scene.traverse(function(child) {
         if (child.isMesh) {
             let m = child;
             child.castShadow = true;
             child.receiveShadow = true;
-            //m.castShadow = true
+            m.castShadow = true;
             m.frustumCulled = false;
         }
     });
     // Set up device orientation event listener
-    function handleOrientation(event) {
-        if (gloveModel) {
-            const gamma = event.gamma || 0;
-            // Adjust the movement speed based on the gamma value
-            const movementSpeed = 0.05;
-            const moveX = gamma * movementSpeed;
-            gloveModel.position.x = moveX;
-        }
-    }
-    window.addEventListener("deviceorientation", handleOrientation);
+    // function handleOrientation(event: DeviceOrientationEvent) {
+    //   if (gloveModel) {
+    //     const gamma = event.gamma || 0;
+    //     // Adjust the movement speed based on the gamma value
+    //     const movementSpeed = 0.05;
+    //     const moveX = gamma * movementSpeed;
+    //     gloveModel.position.x = moveX;
+    //   }
+    // }
+    // window.addEventListener("deviceorientation", handleOrientation);
     trackerGroup.add(gloveModel);
 }, undefined, (error)=>console.error(error));
 // Add ambient light for overall illumination
