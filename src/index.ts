@@ -5,8 +5,7 @@ import "./index.css";
 
 const footImg = new URL("../assets/football.png", import.meta.url).href;
 const model = new URL("../assets/football_net.glb", import.meta.url).href;
-const fieldModel = new URL("../assets/football_field.glb", import.meta.url)
-  .href;
+const fieldModel = new URL("../assets/mini_stadium.glb", import.meta.url).href;
 let field: any;
 
 let gloveModel: any;
@@ -64,8 +63,9 @@ gltfLoader.load(
   fieldModel,
   (gltf) => {
     field = gltf.scene;
-    gltf.scene.scale.set(1, 1, 1);
-    gltf.scene.position.set(0, -1, -10); // Adjust the position along the z-axis for the field
+    gltf.scene.scale.set(2, 2, 2);
+    gltf.scene.position.set(-45, -5, 15);
+    gltf.scene.rotation.set(-Math.PI / 9, 0, 0);
 
     // Add the scene to the tracker group
     gltf.scene.traverse(function (child) {
@@ -84,49 +84,54 @@ gltfLoader.load(
   (error) => console.error(error)
 );
 
-//goalPost
-gltfLoader.load(
-  model,
-  (gltf) => {
-    gloveModel = gltf.scene;
-    gltf.scene.scale.set(3, 3, 3);
-    gltf.scene.position.set(0, -0.7, -15);
-    gltf.scene.rotation.set(0, -Math.PI / 2, 0);
-
-    // Add the scene to the tracker group
-    gltf.scene.traverse(function (child) {
-      if ((child as THREE.Mesh).isMesh) {
-        let m = child as THREE.Mesh;
-        child.castShadow = true;
-        child.receiveShadow = true;
-        m.castShadow = true;
-        m.frustumCulled = false;
-      }
-    });
-
-    // Set up device orientation event listener
-    // function handleOrientation(event: DeviceOrientationEvent) {
-    //   if (gloveModel) {
-    //     const gamma = event.gamma || 0;
-
-    //     // Adjust the movement speed based on the gamma value
-    //     const movementSpeed = 0.05;
-    //     const moveX = gamma * movementSpeed;
-
-    //     gloveModel.position.x = moveX;
-    //   }
-    // }
-
-    // window.addEventListener("deviceorientation", handleOrientation);
-    trackerGroup.add(gloveModel);
-  },
-  undefined,
-  (error) => console.error(error)
-);
-
-// Add ambient light for overall illumination
 const ambientLight2 = new THREE.AmbientLight(0x404040); // Soft white ambient light
+ambientLight2.position.set(0, 5, 0);
 scene.add(ambientLight2);
+
+// Add directional light for better visibility
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(0, 5, 0); // Adjust the position of the light
+scene.add(directionalLight);
+
+//goalPost
+// gltfLoader.load(
+//   model,
+//   (gltf) => {
+//     gloveModel = gltf.scene;
+//     gltf.scene.scale.set(3, 3, 3);
+//     gltf.scene.position.set(0, -0.7, -25);
+//     gltf.scene.rotation.set(0, -Math.PI / 2, 0);
+
+//     // Add the scene to the tracker group
+//     gltf.scene.traverse(function (child) {
+//       if ((child as THREE.Mesh).isMesh) {
+//         let m = child as THREE.Mesh;
+//         child.castShadow = true;
+//         child.receiveShadow = true;
+//         m.castShadow = true;
+//         m.frustumCulled = false;
+//       }
+//     });
+
+//     // Set up device orientation event listener
+//     // function handleOrientation(event: DeviceOrientationEvent) {
+//     //   if (gloveModel) {
+//     //     const gamma = event.gamma || 0;
+
+//     //     // Adjust the movement speed based on the gamma value
+//     //     const movementSpeed = 0.05;
+//     //     const moveX = gamma * movementSpeed;
+
+//     //     gloveModel.position.x = moveX;
+//     //   }
+//     // }
+
+//     // window.addEventListener("deviceorientation", handleOrientation);
+//     trackerGroup.add(gloveModel);
+//   },
+//   undefined,
+//   (error) => console.error(error)
+// );
 
 // ball animation code
 function animateBall() {

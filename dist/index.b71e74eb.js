@@ -538,7 +538,7 @@ var _gltfloader = require("three/examples/jsm/loaders/GLTFLoader");
 var _indexCss = require("./index.css");
 const footImg = new URL(require("62b2ad1e39b9a5b9")).href;
 const model = new URL(require("7a2f5b54650a2bfc")).href;
-const fieldModel = new URL(require("ee062f22be023520")).href;
+const fieldModel = new URL(require("6c5e995035e07e55")).href;
 let field;
 let gloveModel;
 // Setup ThreeJS in the usual way
@@ -580,8 +580,9 @@ const gltfLoader = new (0, _gltfloader.GLTFLoader)(manager);
 //goalField
 gltfLoader.load(fieldModel, (gltf)=>{
     field = gltf.scene;
-    gltf.scene.scale.set(1, 1, 1);
-    gltf.scene.position.set(0, -1, -10); // Adjust the position along the z-axis for the field
+    gltf.scene.scale.set(2, 2, 2);
+    gltf.scene.position.set(-45, -5, 15);
+    gltf.scene.rotation.set(-Math.PI / 9, 0, 0);
     // Add the scene to the tracker group
     gltf.scene.traverse(function(child) {
         if (child.isMesh) {
@@ -594,38 +595,47 @@ gltfLoader.load(fieldModel, (gltf)=>{
     });
     trackerGroup.add(field);
 }, undefined, (error)=>console.error(error));
-//goalPost
-gltfLoader.load(model, (gltf)=>{
-    gloveModel = gltf.scene;
-    gltf.scene.scale.set(3, 3, 3);
-    gltf.scene.position.set(0, -0.7, -15);
-    gltf.scene.rotation.set(0, -Math.PI / 2, 0);
-    // Add the scene to the tracker group
-    gltf.scene.traverse(function(child) {
-        if (child.isMesh) {
-            let m = child;
-            child.castShadow = true;
-            child.receiveShadow = true;
-            m.castShadow = true;
-            m.frustumCulled = false;
-        }
-    });
-    // Set up device orientation event listener
-    // function handleOrientation(event: DeviceOrientationEvent) {
-    //   if (gloveModel) {
-    //     const gamma = event.gamma || 0;
-    //     // Adjust the movement speed based on the gamma value
-    //     const movementSpeed = 0.05;
-    //     const moveX = gamma * movementSpeed;
-    //     gloveModel.position.x = moveX;
-    //   }
-    // }
-    // window.addEventListener("deviceorientation", handleOrientation);
-    trackerGroup.add(gloveModel);
-}, undefined, (error)=>console.error(error));
-// Add ambient light for overall illumination
 const ambientLight2 = new _three.AmbientLight(0x404040); // Soft white ambient light
+ambientLight2.position.set(0, 5, 0);
 scene.add(ambientLight2);
+// Add directional light for better visibility
+const directionalLight = new _three.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(0, 5, 0); // Adjust the position of the light
+scene.add(directionalLight);
+//goalPost
+// gltfLoader.load(
+//   model,
+//   (gltf) => {
+//     gloveModel = gltf.scene;
+//     gltf.scene.scale.set(3, 3, 3);
+//     gltf.scene.position.set(0, -0.7, -25);
+//     gltf.scene.rotation.set(0, -Math.PI / 2, 0);
+//     // Add the scene to the tracker group
+//     gltf.scene.traverse(function (child) {
+//       if ((child as THREE.Mesh).isMesh) {
+//         let m = child as THREE.Mesh;
+//         child.castShadow = true;
+//         child.receiveShadow = true;
+//         m.castShadow = true;
+//         m.frustumCulled = false;
+//       }
+//     });
+//     // Set up device orientation event listener
+//     // function handleOrientation(event: DeviceOrientationEvent) {
+//     //   if (gloveModel) {
+//     //     const gamma = event.gamma || 0;
+//     //     // Adjust the movement speed based on the gamma value
+//     //     const movementSpeed = 0.05;
+//     //     const moveX = gamma * movementSpeed;
+//     //     gloveModel.position.x = moveX;
+//     //   }
+//     // }
+//     // window.addEventListener("deviceorientation", handleOrientation);
+//     trackerGroup.add(gloveModel);
+//   },
+//   undefined,
+//   (error) => console.error(error)
+// );
 // ball animation code
 function animateBall() {
     const initialPosition = new _three.Vector3(0, 0, -20);
@@ -657,7 +667,7 @@ function render() {
     renderer.render(scene, camera);
 }
 
-},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","62b2ad1e39b9a5b9":"bc1aq","7a2f5b54650a2bfc":"dzWQF","ee062f22be023520":"jNSdD"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","62b2ad1e39b9a5b9":"bc1aq","7a2f5b54650a2bfc":"dzWQF","6c5e995035e07e55":"fRiIe"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -54391,8 +54401,8 @@ module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "footba
 },{"./helpers/bundle-url":"lgJ39"}],"dzWQF":[function(require,module,exports) {
 module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football_net.1cbbfa85.glb" + "?" + Date.now();
 
-},{"./helpers/bundle-url":"lgJ39"}],"jNSdD":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football_field.0b6176e5.glb" + "?" + Date.now();
+},{"./helpers/bundle-url":"lgJ39"}],"fRiIe":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "mini_stadium.f5ce3c72.glb" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"lgJ39"}]},["4cEIE","h7u1C"], "h7u1C", "parcelRequire5ba9")
 
