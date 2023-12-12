@@ -1,0 +1,11 @@
+Model Information:
+* title:	Goalkeeper that fits football game
+* source:	https://sketchfab.com/3d-models/goalkeeper-that-fits-football-game-25f996d7b02a404c8144a5d438187f34
+* author:	schysst_kak (https://sketchfab.com/schysst_kak)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Goalkeeper that fits football game" (https://sketchfab.com/3d-models/goalkeeper-that-fits-football-game-25f996d7b02a404c8144a5d438187f34) by schysst_kak (https://sketchfab.com/schysst_kak) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
