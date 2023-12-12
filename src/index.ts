@@ -5,10 +5,14 @@ import "./index.css";
 
 const footImg = new URL("../assets/football.png", import.meta.url).href;
 const model = new URL("../assets/football_net.glb", import.meta.url).href;
+const fieldModel = new URL("../assets/football_field.glb", import.meta.url)
+  .href;
+let field: any;
+
 let gloveModel: any;
 
 // Setup ThreeJS in the usual way
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ logarithmicDepthBuffer: true });
 document.body.appendChild(renderer.domElement);
 let hasPlaced = false;
 
@@ -21,6 +25,7 @@ renderer.setAnimationLoop(render);
 
 // Setup a Zappar camera instead of one of ThreeJS's cameras
 const camera = new ZapparThree.Camera();
+
 const manager = new ZapparThree.LoadingManager();
 
 // The Zappar library needs your WebGL context, so pass it
@@ -53,12 +58,39 @@ trackerGroup.add(ball);
 
 const gltfLoader = new GLTFLoader(manager);
 
+//goalField
+
+gltfLoader.load(
+  fieldModel,
+  (gltf) => {
+    field = gltf.scene;
+    gltf.scene.scale.set(1, 1, 1);
+    gltf.scene.position.set(0, -1, -10); // Adjust the position along the z-axis for the field
+
+    // Add the scene to the tracker group
+    gltf.scene.traverse(function (child) {
+      if ((child as THREE.Mesh).isMesh) {
+        let m = child as THREE.Mesh;
+        child.castShadow = true;
+        child.receiveShadow = true;
+        m.castShadow = true;
+        m.frustumCulled = false;
+      }
+    });
+
+    trackerGroup.add(field);
+  },
+  undefined,
+  (error) => console.error(error)
+);
+
+//goalPost
 gltfLoader.load(
   model,
   (gltf) => {
     gloveModel = gltf.scene;
-    gltf.scene.scale.set(1, 1, 1);
-    gltf.scene.position.set(0, -0.7, -10);
+    gltf.scene.scale.set(3, 3, 3);
+    gltf.scene.position.set(0, -0.7, -15);
     gltf.scene.rotation.set(0, -Math.PI / 2, 0);
 
     // Add the scene to the tracker group

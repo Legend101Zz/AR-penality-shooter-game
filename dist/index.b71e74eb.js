@@ -538,9 +538,13 @@ var _gltfloader = require("three/examples/jsm/loaders/GLTFLoader");
 var _indexCss = require("./index.css");
 const footImg = new URL(require("62b2ad1e39b9a5b9")).href;
 const model = new URL(require("7a2f5b54650a2bfc")).href;
+const fieldModel = new URL(require("ee062f22be023520")).href;
+let field;
 let gloveModel;
 // Setup ThreeJS in the usual way
-const renderer = new _three.WebGLRenderer();
+const renderer = new _three.WebGLRenderer({
+    logarithmicDepthBuffer: true
+});
 document.body.appendChild(renderer.domElement);
 let hasPlaced = false;
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -573,10 +577,28 @@ const ball = new _three.Mesh(new _three.SphereBufferGeometry(1, 32, 32), new _th
 ball.position.set(0, 0, -2); // Adjust the position along the z-axis
 trackerGroup.add(ball);
 const gltfLoader = new (0, _gltfloader.GLTFLoader)(manager);
+//goalField
+gltfLoader.load(fieldModel, (gltf)=>{
+    field = gltf.scene;
+    gltf.scene.scale.set(1, 1, 1);
+    gltf.scene.position.set(0, -1, -10); // Adjust the position along the z-axis for the field
+    // Add the scene to the tracker group
+    gltf.scene.traverse(function(child) {
+        if (child.isMesh) {
+            let m = child;
+            child.castShadow = true;
+            child.receiveShadow = true;
+            m.castShadow = true;
+            m.frustumCulled = false;
+        }
+    });
+    trackerGroup.add(field);
+}, undefined, (error)=>console.error(error));
+//goalPost
 gltfLoader.load(model, (gltf)=>{
     gloveModel = gltf.scene;
-    gltf.scene.scale.set(1, 1, 1);
-    gltf.scene.position.set(0, -0.7, -10);
+    gltf.scene.scale.set(3, 3, 3);
+    gltf.scene.position.set(0, -0.7, -15);
     gltf.scene.rotation.set(0, -Math.PI / 2, 0);
     // Add the scene to the tracker group
     gltf.scene.traverse(function(child) {
@@ -635,7 +657,7 @@ function render() {
     renderer.render(scene, camera);
 }
 
-},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","62b2ad1e39b9a5b9":"bc1aq","7a2f5b54650a2bfc":"dzWQF"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","62b2ad1e39b9a5b9":"bc1aq","7a2f5b54650a2bfc":"dzWQF","ee062f22be023520":"jNSdD"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -54368,6 +54390,9 @@ module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "footba
 
 },{"./helpers/bundle-url":"lgJ39"}],"dzWQF":[function(require,module,exports) {
 module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football_net.1cbbfa85.glb" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"jNSdD":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football_field.0b6176e5.glb" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"lgJ39"}]},["4cEIE","h7u1C"], "h7u1C", "parcelRequire5ba9")
 
