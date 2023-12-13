@@ -713,6 +713,8 @@ let swipeEndPos = null;
 // Set up touch event listeners
 document.addEventListener("touchstart", handleTouchStart, false);
 document.addEventListener("touchend", handleTouchEnd, false);
+// Initialize the arrow UI
+arrowUI = document.getElementById("arrow-ui") || document.createElement("div");
 function handleTouchStart(event) {
     // Store the starting position of the swipe
     swipeStartPos = new _three.Vector2(event.touches[0].clientX, event.touches[0].clientY);
