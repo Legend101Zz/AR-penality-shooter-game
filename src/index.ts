@@ -53,7 +53,7 @@ const ball = new THREE.Mesh(
   new THREE.MeshBasicMaterial({ map: ballTexture })
 );
 
-ball.position.set(0, 0.7, -5);
+ball.position.set(0, 3, -5);
 ball.visible = false; //
 
 // Load the texture for the goalkeeper
@@ -237,6 +237,10 @@ placementUI.addEventListener("click", () => {
   placementUI.remove();
   hasPlaced = true;
 
+  // Set up touch event listeners
+  document.addEventListener("touchstart", handleTouchStart, false);
+  document.addEventListener("touchend", handleTouchEnd, false);
+
   animateBallAndGoalkeeper();
 });
 
@@ -246,10 +250,6 @@ let arrowUI: HTMLElement;
 
 let swipeStartPos: THREE.Vector2 | null = null;
 let swipeEndPos: THREE.Vector2 | null = null;
-
-// Set up touch event listeners
-document.addEventListener("touchstart", handleTouchStart, false);
-document.addEventListener("touchend", handleTouchEnd, false);
 
 // Initialize the arrow UI
 arrowUI = document.getElementById("arrow-ui") || document.createElement("div");
@@ -298,11 +298,11 @@ function updateArrowUI(direction: THREE.Vector2, speed: number) {
 }
 
 function shootBall(direction: THREE.Vector2, speed: number) {
-  const initialBallPosition = new THREE.Vector3(0, 0, -2);
+  const initialBallPosition = new THREE.Vector3(0, 0.7, -5);
   const targetBallPosition = new THREE.Vector3(
-    direction.x * 10, // Adjust the distance based on your needs
-    direction.y * 10, // Adjust the distance based on your needs
-    -2
+    direction.x, // Adjust the distance based on your needs
+    direction.y, // Adjust the distance based on your needs
+    -30
   );
 
   const animationDuration = 1000; // in milliseconds
@@ -313,20 +313,19 @@ function shootBall(direction: THREE.Vector2, speed: number) {
     const elapsedTime = currentTime - startTime;
     const progress = Math.min(elapsedTime / animationDuration, 1);
 
-    ball.position.lerpVectors(
-      initialBallPosition,
-      targetBallPosition,
-      progress
-    );
+    const newPosition = new THREE.Vector3();
+    newPosition.lerpVectors(initialBallPosition, targetBallPosition, progress);
+    ball.position.copy(newPosition);
 
     if (progress < 1) {
       requestAnimationFrame(updateAnimation);
+    } else {
+      // Animation is complete, perform any post-animation actions here
     }
   }
 
   updateAnimation();
 }
-
 // camera.position.set(0, 0, 10);
 // Set up our render loop
 function render() {

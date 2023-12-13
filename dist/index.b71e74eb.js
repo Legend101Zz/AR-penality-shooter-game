@@ -573,7 +573,7 @@ const ballTexture = new _three.TextureLoader().load(footImg);
 const ball = new _three.Mesh(new _three.SphereBufferGeometry(0.6, 32, 32), new _three.MeshBasicMaterial({
     map: ballTexture
 }));
-ball.position.set(0, 0.7, -5);
+ball.position.set(0, 3, -5);
 ball.visible = false; //
 // Load the texture for the goalkeeper
 const goalkeeperTexture = new _three.TextureLoader().load(player);
@@ -704,15 +704,15 @@ const placementUI = document.getElementById("zappar-placement-ui") || document.c
 placementUI.addEventListener("click", ()=>{
     placementUI.remove();
     hasPlaced = true;
+    // Set up touch event listeners
+    document.addEventListener("touchstart", handleTouchStart, false);
+    document.addEventListener("touchend", handleTouchEnd, false);
     animateBallAndGoalkeeper();
 });
 //============BALL SWIPER LOGIC =========
 let arrowUI;
 let swipeStartPos = null;
 let swipeEndPos = null;
-// Set up touch event listeners
-document.addEventListener("touchstart", handleTouchStart, false);
-document.addEventListener("touchend", handleTouchEnd, false);
 // Initialize the arrow UI
 arrowUI = document.getElementById("arrow-ui") || document.createElement("div");
 function handleTouchStart(event) {
@@ -741,15 +741,17 @@ function updateArrowUI(direction, speed) {
     arrowUI.style.transform = `rotate(${arrowRotation}rad) scaleY(${arrowLength / 100})`;
 }
 function shootBall(direction, speed) {
-    const initialBallPosition = new _three.Vector3(0, 0, -2);
-    const targetBallPosition = new _three.Vector3(direction.x * 10, direction.y * 10, -2);
+    const initialBallPosition = new _three.Vector3(0, 0.7, -5);
+    const targetBallPosition = new _three.Vector3(direction.x, direction.y, -30);
     const animationDuration = 1000; // in milliseconds
     const startTime = Date.now();
     function updateAnimation() {
         const currentTime = Date.now();
         const elapsedTime = currentTime - startTime;
         const progress = Math.min(elapsedTime / animationDuration, 1);
-        ball.position.lerpVectors(initialBallPosition, targetBallPosition, progress);
+        const newPosition = new _three.Vector3();
+        newPosition.lerpVectors(initialBallPosition, targetBallPosition, progress);
+        ball.position.copy(newPosition);
         if (progress < 1) requestAnimationFrame(updateAnimation);
     }
     updateAnimation();
