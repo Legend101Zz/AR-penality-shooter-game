@@ -53,7 +53,7 @@ const ball = new THREE.Mesh(
   new THREE.MeshBasicMaterial({ map: ballTexture })
 );
 
-ball.position.set(0, 3, -5);
+ball.position.set(0, 1, -5);
 ball.visible = false; //
 
 // Load the texture for the goalkeeper
@@ -298,11 +298,11 @@ function updateArrowUI(direction: THREE.Vector2, speed: number) {
 }
 
 function shootBall(direction: THREE.Vector2, speed: number) {
-  const initialBallPosition = new THREE.Vector3(0, 0.7, -5);
+  const initialBallPosition = new THREE.Vector3(0, 1, -5);
   const targetBallPosition = new THREE.Vector3(
     direction.x, // Adjust the distance based on your needs
-    direction.y, // Adjust the distance based on your needs
-    -30
+    1, // Adjust the distance based on your needs
+    direction.y
   );
 
   const animationDuration = 1000; // in milliseconds

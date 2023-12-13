@@ -573,7 +573,7 @@ const ballTexture = new _three.TextureLoader().load(footImg);
 const ball = new _three.Mesh(new _three.SphereBufferGeometry(0.6, 32, 32), new _three.MeshBasicMaterial({
     map: ballTexture
 }));
-ball.position.set(0, 3, -5);
+ball.position.set(0, 1, -5);
 ball.visible = false; //
 // Load the texture for the goalkeeper
 const goalkeeperTexture = new _three.TextureLoader().load(player);
@@ -741,8 +741,8 @@ function updateArrowUI(direction, speed) {
     arrowUI.style.transform = `rotate(${arrowRotation}rad) scaleY(${arrowLength / 100})`;
 }
 function shootBall(direction, speed) {
-    const initialBallPosition = new _three.Vector3(0, 0.7, -5);
-    const targetBallPosition = new _three.Vector3(direction.x, direction.y, -30);
+    const initialBallPosition = new _three.Vector3(0, 1, -5);
+    const targetBallPosition = new _three.Vector3(direction.x, 1, direction.y);
     const animationDuration = 1000; // in milliseconds
     const startTime = Date.now();
     function updateAnimation() {
