@@ -5,11 +5,11 @@ import "./index.css";
 
 const footImg = new URL("../assets/football.png", import.meta.url).href;
 const model = new URL("../assets/football_net.glb", import.meta.url).href;
-const fieldModel = new URL("../assets/football_field2.glb", import.meta.url)
+const fieldModel = new URL("../assets/football_field.glb", import.meta.url)
   .href;
 
 let field: any;
-let gloveModel: any;
+let goalPostModel: any;
 
 // Setup ThreeJS in the usual way
 const renderer = new THREE.WebGLRenderer();
@@ -65,8 +65,8 @@ gltfLoader.load(
   (gltf) => {
     field = gltf.scene;
     gltf.scene.scale.set(1, 1, 1);
-    gltf.scene.position.set(0, -1, -10); // Adjust the position along the z-axis for the field
-
+    gltf.scene.position.set(0, -2, -5);
+    camera.lookAt(gltf.scene.position);
     // Add the scene to the tracker group
     gltf.scene.traverse(function (child) {
       if ((child as THREE.Mesh).isMesh) {
@@ -88,9 +88,9 @@ gltfLoader.load(
 gltfLoader.load(
   model,
   (gltf) => {
-    gloveModel = gltf.scene;
+    goalPostModel = gltf.scene;
     gltf.scene.scale.set(3, 3, 3);
-    gltf.scene.position.set(0, -0.7, -15);
+    gltf.scene.position.set(0, 3.5, -25);
     gltf.scene.rotation.set(0, -Math.PI / 2, 0);
 
     // Add the scene to the tracker group
@@ -106,19 +106,19 @@ gltfLoader.load(
 
     // Set up device orientation event listener
     // function handleOrientation(event: DeviceOrientationEvent) {
-    //   if (gloveModel) {
+    //   if (goalPostModel) {
     //     const gamma = event.gamma || 0;
 
     //     // Adjust the movement speed based on the gamma value
     //     const movementSpeed = 0.05;
     //     const moveX = gamma * movementSpeed;
 
-    //     gloveModel.position.x = moveX;
+    //     goalPostModel.position.x = moveX;
     //   }
     // }
 
     // window.addEventListener("deviceorientation", handleOrientation);
-    trackerGroup.add(gloveModel);
+    trackerGroup.add(goalPostModel);
   },
   undefined,
   (error) => console.error(error)
@@ -138,7 +138,7 @@ scene.add(directionalLight);
 // gltfLoader.load(
 //   model,
 //   (gltf) => {
-//     gloveModel = gltf.scene;
+//     goalPostModel = gltf.scene;
 //     gltf.scene.scale.set(3, 3, 3);
 //     gltf.scene.position.set(0, -0.7, -25);
 //     gltf.scene.rotation.set(0, -Math.PI / 2, 0);
@@ -156,19 +156,19 @@ scene.add(directionalLight);
 
 //     // Set up device orientation event listener
 //     // function handleOrientation(event: DeviceOrientationEvent) {
-//     //   if (gloveModel) {
+//     //   if (goalPostModel) {
 //     //     const gamma = event.gamma || 0;
 
 //     //     // Adjust the movement speed based on the gamma value
 //     //     const movementSpeed = 0.05;
 //     //     const moveX = gamma * movementSpeed;
 
-//     //     gloveModel.position.x = moveX;
+//     //     goalPostModel.position.x = moveX;
 //     //   }
 //     // }
 
 //     // window.addEventListener("deviceorientation", handleOrientation);
-//     trackerGroup.add(gloveModel);
+//     trackerGroup.add(goalPostModel);
 //   },
 //   undefined,
 //   (error) => console.error(error)
@@ -215,6 +215,7 @@ placementUI.addEventListener("click", () => {
   animateBall();
 });
 
+// camera.position.set(0, 0, 10);
 // Set up our render loop
 function render() {
   camera.updateFrame(renderer);
