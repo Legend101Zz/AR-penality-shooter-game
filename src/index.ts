@@ -7,6 +7,7 @@ const footImg = new URL("../assets/football.png", import.meta.url).href;
 const model = new URL("../assets/football_net.glb", import.meta.url).href;
 const fieldModel = new URL("../assets/football_field.glb", import.meta.url)
   .href;
+const player = new URL("../assets/player.png", import.meta.url).href;
 
 let field: any;
 let goalPostModel: any;
@@ -55,6 +56,19 @@ const ball = new THREE.Mesh(
 ball.position.set(0, 0, -2); // Adjust the position along the z-axis
 ball.visible = false; //
 trackerGroup.add(ball);
+
+// Load the texture for the goalkeeper
+const goalkeeperTexture = new THREE.TextureLoader().load(player);
+
+// Create the goalkeeper mesh
+const goalkeeperGeometry = new THREE.PlaneBufferGeometry(4, 4);
+const goalkeeperMaterial = new THREE.MeshBasicMaterial({
+  map: goalkeeperTexture,
+  transparent: true,
+});
+const goalkeeper = new THREE.Mesh(goalkeeperGeometry, goalkeeperMaterial);
+goalkeeper.position.set(0, 2, -25); // Adjust the initial position of the goalkeeper
+goalkeeper.visible = false; // Set it invisible initially
 
 const gltfLoader = new GLTFLoader(manager);
 
@@ -118,7 +132,9 @@ gltfLoader.load(
     // }
 
     // window.addEventListener("deviceorientation", handleOrientation);
-    trackerGroup.add(goalPostModel);
+    // Add the goalkeeper to the tracker group
+    goalkeeper.visible = true;
+    trackerGroup.add(goalPostModel, goalkeeper);
   },
   undefined,
   (error) => console.error(error)
@@ -174,28 +190,44 @@ scene.add(directionalLight);
 //   (error) => console.error(error)
 // );
 
-// ball animation code
-function animateBall() {
-  const initialPosition = new THREE.Vector3(0, 0, -20);
-  const targetPosition = new THREE.Vector3(
-    getRandomValue(-5, 5),
-    getRandomValue(-2, 2),
-    -2
-  ); // Adjust the target position
-
-  const animationDuration = 1000; // in milliseconds
-  const startTime = Date.now();
-
+// ball and keeper animation code
+function animateBallAndGoalkeeper() {
   function updateAnimation() {
-    const currentTime = Date.now();
-    const elapsedTime = currentTime - startTime;
-    const progress = Math.min(elapsedTime / animationDuration, 1);
+    const targetBallPosition = new THREE.Vector3(
+      getRandomValue(-5, 5),
+      getRandomValue(-2, 2),
+      -2
+    ); // Adjust the target position for the ball
 
-    ball.position.lerpVectors(initialPosition, targetPosition, progress);
+    const targetGoalkeeperPosition = new THREE.Vector3(
+      getRandomValue(-5, 5),
+      getRandomValue(1, 3),
+      -25
+    ); // Adjust the target position for the goalkeeper
 
-    if (progress < 1) {
-      requestAnimationFrame(updateAnimation);
+    const animationDuration = 1000; // in milliseconds
+    const startTime = Date.now();
+
+    function animate() {
+      const currentTime = Date.now();
+      const elapsedTime = currentTime - startTime;
+      const progress = Math.min(elapsedTime / animationDuration, 1);
+
+      ball.position.lerpVectors(ball.position, targetBallPosition, progress);
+      goalkeeper.position.lerpVectors(
+        goalkeeper.position,
+        targetGoalkeeperPosition,
+        progress
+      );
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        updateAnimation(); // Start a new animation cycle
+      }
     }
+
+    animate();
   }
 
   updateAnimation();
@@ -212,7 +244,7 @@ placementUI.addEventListener("click", () => {
   placementUI.remove();
   hasPlaced = true;
 
-  animateBall();
+  animateBallAndGoalkeeper();
 });
 
 // camera.position.set(0, 0, 10);

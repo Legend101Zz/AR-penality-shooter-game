@@ -539,6 +539,7 @@ var _indexCss = require("./index.css");
 const footImg = new URL(require("62b2ad1e39b9a5b9")).href;
 const model = new URL(require("7a2f5b54650a2bfc")).href;
 const fieldModel = new URL(require("ee062f22be023520")).href;
+const player = new URL(require("4faf0dae2d65ecc2")).href;
 let field;
 let goalPostModel;
 // Setup ThreeJS in the usual way
@@ -575,6 +576,17 @@ const ball = new _three.Mesh(new _three.SphereBufferGeometry(1, 32, 32), new _th
 ball.position.set(0, 0, -2); // Adjust the position along the z-axis
 ball.visible = false; //
 trackerGroup.add(ball);
+// Load the texture for the goalkeeper
+const goalkeeperTexture = new _three.TextureLoader().load(player);
+// Create the goalkeeper mesh
+const goalkeeperGeometry = new _three.PlaneBufferGeometry(4, 4);
+const goalkeeperMaterial = new _three.MeshBasicMaterial({
+    map: goalkeeperTexture,
+    transparent: true
+});
+const goalkeeper = new _three.Mesh(goalkeeperGeometry, goalkeeperMaterial);
+goalkeeper.position.set(0, 2, -25); // Adjust the initial position of the goalkeeper
+goalkeeper.visible = false; // Set it invisible initially
 const gltfLoader = new (0, _gltfloader.GLTFLoader)(manager);
 //goalField
 gltfLoader.load(fieldModel, (gltf)=>{
@@ -621,7 +633,9 @@ gltfLoader.load(model, (gltf)=>{
     //   }
     // }
     // window.addEventListener("deviceorientation", handleOrientation);
-    trackerGroup.add(goalPostModel);
+    // Add the goalkeeper to the tracker group
+    goalkeeper.visible = true;
+    trackerGroup.add(goalPostModel, goalkeeper);
 }, undefined, (error)=>console.error(error));
 // Add ambient light for overall illumination
 const ambientLight2 = new _three.AmbientLight(0x404040); // Soft white ambient light
@@ -665,18 +679,23 @@ scene.add(directionalLight);
 //   undefined,
 //   (error) => console.error(error)
 // );
-// ball animation code
-function animateBall() {
-    const initialPosition = new _three.Vector3(0, 0, -20);
-    const targetPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(-2, 2), -2); // Adjust the target position
-    const animationDuration = 1000; // in milliseconds
-    const startTime = Date.now();
+// ball and keeper animation code
+function animateBallAndGoalkeeper() {
     function updateAnimation() {
-        const currentTime = Date.now();
-        const elapsedTime = currentTime - startTime;
-        const progress = Math.min(elapsedTime / animationDuration, 1);
-        ball.position.lerpVectors(initialPosition, targetPosition, progress);
-        if (progress < 1) requestAnimationFrame(updateAnimation);
+        const targetBallPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(-2, 2), -2); // Adjust the target position for the ball
+        const targetGoalkeeperPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(1, 3), -25); // Adjust the target position for the goalkeeper
+        const animationDuration = 1000; // in milliseconds
+        const startTime = Date.now();
+        function animate() {
+            const currentTime = Date.now();
+            const elapsedTime = currentTime - startTime;
+            const progress = Math.min(elapsedTime / animationDuration, 1);
+            ball.position.lerpVectors(ball.position, targetBallPosition, progress);
+            goalkeeper.position.lerpVectors(goalkeeper.position, targetGoalkeeperPosition, progress);
+            if (progress < 1) requestAnimationFrame(animate);
+            else updateAnimation(); // Start a new animation cycle
+        }
+        animate();
     }
     updateAnimation();
 }
@@ -687,7 +706,7 @@ const placementUI = document.getElementById("zappar-placement-ui") || document.c
 placementUI.addEventListener("click", ()=>{
     placementUI.remove();
     hasPlaced = true;
-    animateBall();
+    animateBallAndGoalkeeper();
 });
 // camera.position.set(0, 0, 10);
 // Set up our render loop
@@ -697,7 +716,7 @@ function render() {
     renderer.render(scene, camera);
 }
 
-},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","62b2ad1e39b9a5b9":"bc1aq","7a2f5b54650a2bfc":"dzWQF","ee062f22be023520":"jNSdD"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","62b2ad1e39b9a5b9":"bc1aq","7a2f5b54650a2bfc":"dzWQF","ee062f22be023520":"jNSdD","4faf0dae2d65ecc2":"hfktC"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -54433,6 +54452,9 @@ module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "footba
 
 },{"./helpers/bundle-url":"lgJ39"}],"jNSdD":[function(require,module,exports) {
 module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football_field.0b6176e5.glb" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"hfktC":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "player.49098853.png" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"lgJ39"}]},["4cEIE","h7u1C"], "h7u1C", "parcelRequire5ba9")
 
