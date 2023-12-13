@@ -49,11 +49,11 @@ scene.add(trackerGroup);
 // Add some content (ball with football texture placed at a specific distance along the z-axis)
 const ballTexture = new THREE.TextureLoader().load(footImg);
 const ball = new THREE.Mesh(
-  new THREE.SphereBufferGeometry(0.7, 32, 32),
+  new THREE.SphereBufferGeometry(0.6, 32, 32),
   new THREE.MeshBasicMaterial({ map: ballTexture })
 );
 
-ball.position.set(0, 3, -23); // Adjust the position along the z-axis
+ball.position.set(0, 0.7, -5);
 ball.visible = false; //
 
 // Load the texture for the goalkeeper
@@ -242,6 +242,8 @@ placementUI.addEventListener("click", () => {
 
 //============BALL SWIPER LOGIC =========
 
+let arrowUI: HTMLElement;
+
 let swipeStartPos: THREE.Vector2 | null = null;
 let swipeEndPos: THREE.Vector2 | null = null;
 
@@ -271,6 +273,9 @@ function handleTouchEnd(event: TouchEvent) {
       .normalize();
     const speed = Math.min(swipeStartPos.distanceTo(swipeEndPos) * 0.01, 1.0);
 
+    // Update the arrow UI based on the calculated direction and speed
+    updateArrowUI(direction, speed);
+
     // Shoot the ball in the calculated direction and speed
     shootBall(direction, speed);
 
@@ -278,6 +283,15 @@ function handleTouchEnd(event: TouchEvent) {
     swipeStartPos = null;
     swipeEndPos = null;
   }
+}
+
+function updateArrowUI(direction: THREE.Vector2, speed: number) {
+  const arrowLength = Math.min(speed * 100, 100); // Limit the arrow length for better visibility
+  const arrowRotation = Math.atan2(direction.y, direction.x);
+
+  arrowUI.style.transform = `rotate(${arrowRotation}rad) scaleY(${
+    arrowLength / 100
+  })`;
 }
 
 function shootBall(direction: THREE.Vector2, speed: number) {

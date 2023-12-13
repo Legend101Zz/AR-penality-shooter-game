@@ -570,10 +570,10 @@ const trackerGroup = new _zapparThreejs.InstantWorldAnchorGroup(camera, tracker)
 scene.add(trackerGroup);
 // Add some content (ball with football texture placed at a specific distance along the z-axis)
 const ballTexture = new _three.TextureLoader().load(footImg);
-const ball = new _three.Mesh(new _three.SphereBufferGeometry(0.7, 32, 32), new _three.MeshBasicMaterial({
+const ball = new _three.Mesh(new _three.SphereBufferGeometry(0.6, 32, 32), new _three.MeshBasicMaterial({
     map: ballTexture
 }));
-ball.position.set(0, 3, -23); // Adjust the position along the z-axis
+ball.position.set(0, 0.7, -5);
 ball.visible = false; //
 // Load the texture for the goalkeeper
 const goalkeeperTexture = new _three.TextureLoader().load(player);
@@ -707,6 +707,7 @@ placementUI.addEventListener("click", ()=>{
     animateBallAndGoalkeeper();
 });
 //============BALL SWIPER LOGIC =========
+let arrowUI;
 let swipeStartPos = null;
 let swipeEndPos = null;
 // Set up touch event listeners
@@ -723,12 +724,19 @@ function handleTouchEnd(event) {
         // Calculate the direction and speed based on the difference between start and end positions
         const direction = new _three.Vector2().subVectors(swipeEndPos, swipeStartPos).normalize();
         const speed = Math.min(swipeStartPos.distanceTo(swipeEndPos) * 0.01, 1.0);
+        // Update the arrow UI based on the calculated direction and speed
+        updateArrowUI(direction, speed);
         // Shoot the ball in the calculated direction and speed
         shootBall(direction, speed);
         // Reset swipe positions for the next swipe
         swipeStartPos = null;
         swipeEndPos = null;
     }
+}
+function updateArrowUI(direction, speed) {
+    const arrowLength = Math.min(speed * 100, 100); // Limit the arrow length for better visibility
+    const arrowRotation = Math.atan2(direction.y, direction.x);
+    arrowUI.style.transform = `rotate(${arrowRotation}rad) scaleY(${arrowLength / 100})`;
 }
 function shootBall(direction, speed) {
     const initialBallPosition = new _three.Vector3(0, 0, -2);
