@@ -6,6 +6,15 @@ body {
   height: 100%;
 }
 
+/* #arrow-ui {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 100px;
+  height: 100px;
+  border: 2px solid white; /* Add a border for better visibility */
+/* } */
+
 #zappar-placement-ui {
   position: absolute;
   bottom: 30px;

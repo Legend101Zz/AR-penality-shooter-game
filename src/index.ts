@@ -3,6 +3,9 @@ import * as ZapparThree from "@zappar/zappar-threejs";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import "./index.css";
 
+// Import Hammer.js
+import Hammer from "hammerjs";
+
 const footImg = new URL("../assets/football.png", import.meta.url).href;
 const model = new URL("../assets/football_net.glb", import.meta.url).href;
 const fieldModel = new URL("../assets/football_field.glb", import.meta.url)
@@ -12,7 +15,6 @@ const player = new URL("../assets/player.png", import.meta.url).href;
 let field: any;
 let goalPostModel: any;
 
-// Setup ThreeJS in the usual way
 const renderer = new THREE.WebGLRenderer();
 document.body.appendChild(renderer.domElement);
 let hasPlaced = false;
@@ -24,29 +26,23 @@ window.addEventListener("resize", () => {
 
 renderer.setAnimationLoop(render);
 
-// Setup a Zappar camera instead of one of ThreeJS's cameras
 const camera = new ZapparThree.Camera();
 const manager = new ZapparThree.LoadingManager();
 
-// The Zappar library needs your WebGL context, so pass it
 ZapparThree.glContextSet(renderer.getContext());
 
-// Create a ThreeJS Scene and set its background to be the camera background texture
 const scene = new THREE.Scene();
 scene.background = camera.backgroundTexture;
 
-// Request the necessary permission from the user
 ZapparThree.permissionRequestUI().then((granted) => {
   if (granted) camera.start();
   else ZapparThree.permissionDeniedUI();
 });
 
-// Set up our instant tracker group
 const tracker = new ZapparThree.InstantWorldTracker();
 const trackerGroup = new ZapparThree.InstantWorldAnchorGroup(camera, tracker);
 scene.add(trackerGroup);
 
-// Add some content (ball with football texture placed at a specific distance along the z-axis)
 const ballTexture = new THREE.TextureLoader().load(footImg);
 const ball = new THREE.Mesh(
   new THREE.SphereBufferGeometry(0.6, 32, 32),
@@ -54,24 +50,21 @@ const ball = new THREE.Mesh(
 );
 
 ball.position.set(0, 1, -5);
-ball.visible = false; //
+ball.visible = false;
 
-// Load the texture for the goalkeeper
 const goalkeeperTexture = new THREE.TextureLoader().load(player);
 
-// Create the goalkeeper mesh
 const goalkeeperGeometry = new THREE.PlaneBufferGeometry(4, 4);
 const goalkeeperMaterial = new THREE.MeshBasicMaterial({
   map: goalkeeperTexture,
   transparent: true,
 });
+
 const goalkeeper = new THREE.Mesh(goalkeeperGeometry, goalkeeperMaterial);
-goalkeeper.position.set(0, 2, -25); // Adjust the initial position of the goalkeeper
-goalkeeper.visible = false; // Set it invisible initially
+goalkeeper.position.set(0, 2, -25);
+goalkeeper.visible = false;
 
 const gltfLoader = new GLTFLoader(manager);
-
-//goalField
 
 gltfLoader.load(
   fieldModel,
@@ -80,7 +73,7 @@ gltfLoader.load(
     gltf.scene.scale.set(1, 1, 1);
     gltf.scene.position.set(0, -2, -5);
     camera.lookAt(gltf.scene.position);
-    // Add the scene to the tracker group
+
     gltf.scene.traverse(function (child) {
       if ((child as THREE.Mesh).isMesh) {
         let m = child as THREE.Mesh;
@@ -97,7 +90,6 @@ gltfLoader.load(
   (error) => console.error(error)
 );
 
-//goalPost
 gltfLoader.load(
   model,
   (gltf) => {
@@ -106,7 +98,6 @@ gltfLoader.load(
     gltf.scene.position.set(0, 3.5, -25);
     gltf.scene.rotation.set(0, -Math.PI / 2, 0);
 
-    // Add the scene to the tracker group
     gltf.scene.traverse(function (child) {
       if ((child as THREE.Mesh).isMesh) {
         let m = child as THREE.Mesh;
@@ -117,21 +108,6 @@ gltfLoader.load(
       }
     });
 
-    // Set up device orientation event listener
-    // function handleOrientation(event: DeviceOrientationEvent) {
-    //   if (goalPostModel) {
-    //     const gamma = event.gamma || 0;
-
-    //     // Adjust the movement speed based on the gamma value
-    //     const movementSpeed = 0.05;
-    //     const moveX = gamma * movementSpeed;
-
-    //     goalPostModel.position.x = moveX;
-    //   }
-    // }
-
-    // window.addEventListener("deviceorientation", handleOrientation);
-    // Add the goalkeeper to the tracker group
     goalkeeper.visible = true;
     ball.visible = true;
     trackerGroup.add(goalPostModel, goalkeeper, ball);
@@ -140,66 +116,23 @@ gltfLoader.load(
   (error) => console.error(error)
 );
 
-// Add ambient light for overall illumination
-const ambientLight2 = new THREE.AmbientLight(0x404040); // Soft white ambient light
+const ambientLight2 = new THREE.AmbientLight(0x404040);
 ambientLight2.position.set(0, 5, 0);
 scene.add(ambientLight2);
 
-// Add directional light for better visibility
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(0, 5, 0); // Adjust the position of the light
+directionalLight.position.set(0, 5, 0);
 scene.add(directionalLight);
 
-//goalPost
-// gltfLoader.load(
-//   model,
-//   (gltf) => {
-//     goalPostModel = gltf.scene;
-//     gltf.scene.scale.set(3, 3, 3);
-//     gltf.scene.position.set(0, -0.7, -25);
-//     gltf.scene.rotation.set(0, -Math.PI / 2, 0);
-
-//     // Add the scene to the tracker group
-//     gltf.scene.traverse(function (child) {
-//       if ((child as THREE.Mesh).isMesh) {
-//         let m = child as THREE.Mesh;
-//         child.castShadow = true;
-//         child.receiveShadow = true;
-//         m.castShadow = true;
-//         m.frustumCulled = false;
-//       }
-//     });
-
-//     // Set up device orientation event listener
-//     // function handleOrientation(event: DeviceOrientationEvent) {
-//     //   if (goalPostModel) {
-//     //     const gamma = event.gamma || 0;
-
-//     //     // Adjust the movement speed based on the gamma value
-//     //     const movementSpeed = 0.05;
-//     //     const moveX = gamma * movementSpeed;
-
-//     //     goalPostModel.position.x = moveX;
-//     //   }
-//     // }
-
-//     // window.addEventListener("deviceorientation", handleOrientation);
-//     trackerGroup.add(goalPostModel);
-//   },
-//   undefined,
-//   (error) => console.error(error)
-// );
-
-// ball and keeper animation code
 function animateBallAndGoalkeeper() {
   function updateAnimation() {
     const targetGoalkeeperPosition = new THREE.Vector3(
       getRandomValue(-6, 6),
       2,
       -25
-    ); // Adjust the target position for the goalkeeper
+    );
 
-    const animationDuration = 1000; // in milliseconds
+    const animationDuration = 1000;
     const startTime = Date.now();
 
     function animate() {
@@ -216,7 +149,7 @@ function animateBallAndGoalkeeper() {
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
-        updateAnimation(); // Start a new animation cycle
+        updateAnimation();
       }
     }
 
@@ -237,75 +170,109 @@ placementUI.addEventListener("click", () => {
   placementUI.remove();
   hasPlaced = true;
 
-  // Set up touch event listeners
-  document.addEventListener("touchstart", handleTouchStart, false);
-  document.addEventListener("touchend", handleTouchEnd, false);
+  // Set up Hammer.js for gesture recognition
+  const hammer = new Hammer(document.body);
 
-  animateBallAndGoalkeeper();
-});
+  // Enable swipe recognizer
+  hammer.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
 
-//============BALL SWIPER LOGIC =========
-
-let arrowUI: HTMLElement;
-
-let swipeStartPos: THREE.Vector2 | null = null;
-let swipeEndPos: THREE.Vector2 | null = null;
-
-// Initialize the arrow UI
-arrowUI = document.getElementById("arrow-ui") || document.createElement("div");
-
-function handleTouchStart(event: TouchEvent) {
-  // Store the starting position of the swipe
-  swipeStartPos = new THREE.Vector2(
-    event.touches[0].clientX,
-    event.touches[0].clientY
-  );
-}
-
-function handleTouchEnd(event: TouchEvent) {
-  if (swipeStartPos) {
-    // Store the ending position of the swipe
-    swipeEndPos = new THREE.Vector2(
-      event.changedTouches[0].clientX,
-      event.changedTouches[0].clientY
-    );
-
-    // Calculate the direction and speed based on the difference between start and end positions
-    const direction = new THREE.Vector2()
-      .subVectors(swipeEndPos, swipeStartPos)
-      .normalize();
-    const speed = Math.min(swipeStartPos.distanceTo(swipeEndPos) * 0.01, 1.0);
+  hammer.on("swipe", (event) => {
+    // Using event.direction instead of event.velocityX and event.velocityY
+    const direction = new THREE.Vector2(event.direction, 0).normalize();
+    const speed = Math.min(direction.length(), 1.0);
 
     // Update the arrow UI based on the calculated direction and speed
     updateArrowUI(direction, speed);
 
     // Shoot the ball in the calculated direction and speed
     shootBall(direction, speed);
+  });
 
-    // Reset swipe positions for the next swipe
-    swipeStartPos = null;
-    swipeEndPos = null;
-  }
-}
+  animateBallAndGoalkeeper();
+});
 
-function updateArrowUI(direction: THREE.Vector2, speed: number) {
-  const arrowLength = Math.min(speed * 100, 100); // Limit the arrow length for better visibility
-  const arrowRotation = Math.atan2(direction.y, direction.x);
+let arrowUI: HTMLElement;
 
-  arrowUI.style.transform = `rotate(${arrowRotation}rad) scaleY(${
-    arrowLength / 100
-  })`;
+arrowUI = document.getElementById("arrow-ui") || document.createElement("div");
+
+//=========ADDING ARROW =========
+
+// Create an arrow geometry
+const arrowGeometry = new THREE.ConeGeometry(0.2, 1, 8);
+
+// Create an arrow material
+const arrowMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+// Create the arrow mesh
+const arrow = new THREE.Mesh(arrowGeometry, arrowMaterial);
+
+// Set initial position (same as ball's initial position)
+arrow.position.set(0, 1, -5);
+
+// Add the arrow to the scene
+scene.add(arrow);
+
+// let swipeStartPos: THREE.Vector2 | null = null;
+// let swipeEndPos: THREE.Vector2 | null = null;
+
+// function handleTouchStart(event: TouchEvent) {
+//   swipeStartPos = new THREE.Vector2(
+//     event.touches[0].clientX,
+//     event.touches[0].clientY
+//   );
+// }
+
+// function handleTouchEnd(event: TouchEvent) {
+//   if (swipeStartPos) {
+//     swipeEndPos = new THREE.Vector2(
+//       event.changedTouches[0].clientX,
+//       event.changedTouches[0].clientY
+//     );
+
+//     const direction = new THREE.Vector2()
+//       .subVectors(swipeEndPos, swipeStartPos)
+//       .normalize();
+//     const speed = Math.min(swipeStartPos.distanceTo(swipeEndPos) * 0.01, 1.0);
+
+//     updateArrowUI(direction, speed);
+//     shootBall(direction, speed);
+
+//     swipeStartPos = null;
+//     swipeEndPos = null;
+//   }
+// }
+
+// function updateArrowUI(direction: THREE.Vector2, speed: number) {
+//   const arrowLength = Math.min(speed * 100, 100);
+//   const arrowRotation = Math.atan2(direction.y, direction.x);
+
+//   arrowUI.style.transform = `rotate(${arrowRotation}rad) scaleY(${
+//     arrowLength / 100
+//   })`;
+// }
+
+function updateArrowUI() {
+  // Set arrow's position to the ball's position
+  arrow.position.copy(ball.position);
+
+  // Calculate arrow rotation based on the ball's movement direction (for example, using goalkeeper's position)
+  const direction = new THREE.Vector3();
+  direction.subVectors(goalkeeper.position, ball.position).normalize();
+  const arrowRotation = Math.atan2(direction.z, direction.x);
+
+  // Set arrow's rotation
+  arrow.rotation.set(0, arrowRotation, 0);
 }
 
 function shootBall(direction: THREE.Vector2, speed: number) {
   const initialBallPosition = new THREE.Vector3(0, 1, -5);
   const targetBallPosition = new THREE.Vector3(
-    direction.x, // Adjust the distance based on your needs
-    1, // Adjust the distance based on your needs
-    direction.y
+    direction.x * 2,
+    1,
+    getRandomValue(-40, -25)
   );
 
-  const animationDuration = 1000; // in milliseconds
+  const animationDuration = 1000;
   const startTime = Date.now();
 
   function updateAnimation() {
@@ -326,11 +293,10 @@ function shootBall(direction: THREE.Vector2, speed: number) {
 
   updateAnimation();
 }
-// camera.position.set(0, 0, 10);
-// Set up our render loop
+
 function render() {
   camera.updateFrame(renderer);
   if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, 0, -5);
-
+  updateArrowUI();
   renderer.render(scene, camera);
 }
