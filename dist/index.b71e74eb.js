@@ -683,7 +683,7 @@ scene.add(directionalLight);
 function animateBallAndGoalkeeper() {
     function updateAnimation() {
         const targetBallPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(-2, 2), -2); // Adjust the target position for the ball
-        const targetGoalkeeperPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(1, 3), -25); // Adjust the target position for the goalkeeper
+        const targetGoalkeeperPosition = new _three.Vector3(getRandomValue(-6, 6), getRandomValue(2, 4.5), -25); // Adjust the target position for the goalkeeper
         const animationDuration = 1000; // in milliseconds
         const startTime = Date.now();
         function animate() {

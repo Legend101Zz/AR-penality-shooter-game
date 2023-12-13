@@ -200,8 +200,8 @@ function animateBallAndGoalkeeper() {
     ); // Adjust the target position for the ball
 
     const targetGoalkeeperPosition = new THREE.Vector3(
-      getRandomValue(-5, 5),
-      getRandomValue(1, 3),
+      getRandomValue(-6, 6),
+      getRandomValue(2, 4.5),
       -25
     ); // Adjust the target position for the goalkeeper
 
