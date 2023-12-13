@@ -49,13 +49,12 @@ scene.add(trackerGroup);
 // Add some content (ball with football texture placed at a specific distance along the z-axis)
 const ballTexture = new THREE.TextureLoader().load(footImg);
 const ball = new THREE.Mesh(
-  new THREE.SphereBufferGeometry(1, 32, 32),
+  new THREE.SphereBufferGeometry(0.7, 32, 32),
   new THREE.MeshBasicMaterial({ map: ballTexture })
 );
 
-ball.position.set(0, 0, -2); // Adjust the position along the z-axis
+ball.position.set(0, 3, -23); // Adjust the position along the z-axis
 ball.visible = false; //
-trackerGroup.add(ball);
 
 // Load the texture for the goalkeeper
 const goalkeeperTexture = new THREE.TextureLoader().load(player);
@@ -134,7 +133,8 @@ gltfLoader.load(
     // window.addEventListener("deviceorientation", handleOrientation);
     // Add the goalkeeper to the tracker group
     goalkeeper.visible = true;
-    trackerGroup.add(goalPostModel, goalkeeper);
+    ball.visible = true;
+    trackerGroup.add(goalPostModel, goalkeeper, ball);
   },
   undefined,
   (error) => console.error(error)
@@ -193,15 +193,9 @@ scene.add(directionalLight);
 // ball and keeper animation code
 function animateBallAndGoalkeeper() {
   function updateAnimation() {
-    const targetBallPosition = new THREE.Vector3(
-      getRandomValue(-5, 5),
-      getRandomValue(-2, 2),
-      -2
-    ); // Adjust the target position for the ball
-
     const targetGoalkeeperPosition = new THREE.Vector3(
       getRandomValue(-6, 6),
-      getRandomValue(2, 4.5),
+      2,
       -25
     ); // Adjust the target position for the goalkeeper
 
@@ -213,7 +207,6 @@ function animateBallAndGoalkeeper() {
       const elapsedTime = currentTime - startTime;
       const progress = Math.min(elapsedTime / animationDuration, 1);
 
-      ball.position.lerpVectors(ball.position, targetBallPosition, progress);
       goalkeeper.position.lerpVectors(
         goalkeeper.position,
         targetGoalkeeperPosition,
@@ -246,6 +239,76 @@ placementUI.addEventListener("click", () => {
 
   animateBallAndGoalkeeper();
 });
+
+//============BALL SWIPER LOGIC =========
+
+let swipeStartPos: THREE.Vector2 | null = null;
+let swipeEndPos: THREE.Vector2 | null = null;
+
+// Set up touch event listeners
+document.addEventListener("touchstart", handleTouchStart, false);
+document.addEventListener("touchend", handleTouchEnd, false);
+
+function handleTouchStart(event: TouchEvent) {
+  // Store the starting position of the swipe
+  swipeStartPos = new THREE.Vector2(
+    event.touches[0].clientX,
+    event.touches[0].clientY
+  );
+}
+
+function handleTouchEnd(event: TouchEvent) {
+  if (swipeStartPos) {
+    // Store the ending position of the swipe
+    swipeEndPos = new THREE.Vector2(
+      event.changedTouches[0].clientX,
+      event.changedTouches[0].clientY
+    );
+
+    // Calculate the direction and speed based on the difference between start and end positions
+    const direction = new THREE.Vector2()
+      .subVectors(swipeEndPos, swipeStartPos)
+      .normalize();
+    const speed = Math.min(swipeStartPos.distanceTo(swipeEndPos) * 0.01, 1.0);
+
+    // Shoot the ball in the calculated direction and speed
+    shootBall(direction, speed);
+
+    // Reset swipe positions for the next swipe
+    swipeStartPos = null;
+    swipeEndPos = null;
+  }
+}
+
+function shootBall(direction: THREE.Vector2, speed: number) {
+  const initialBallPosition = new THREE.Vector3(0, 0, -2);
+  const targetBallPosition = new THREE.Vector3(
+    direction.x * 10, // Adjust the distance based on your needs
+    direction.y * 10, // Adjust the distance based on your needs
+    -2
+  );
+
+  const animationDuration = 1000; // in milliseconds
+  const startTime = Date.now();
+
+  function updateAnimation() {
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - startTime;
+    const progress = Math.min(elapsedTime / animationDuration, 1);
+
+    ball.position.lerpVectors(
+      initialBallPosition,
+      targetBallPosition,
+      progress
+    );
+
+    if (progress < 1) {
+      requestAnimationFrame(updateAnimation);
+    }
+  }
+
+  updateAnimation();
+}
 
 // camera.position.set(0, 0, 10);
 // Set up our render loop

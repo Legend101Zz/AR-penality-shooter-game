@@ -570,12 +570,11 @@ const trackerGroup = new _zapparThreejs.InstantWorldAnchorGroup(camera, tracker)
 scene.add(trackerGroup);
 // Add some content (ball with football texture placed at a specific distance along the z-axis)
 const ballTexture = new _three.TextureLoader().load(footImg);
-const ball = new _three.Mesh(new _three.SphereBufferGeometry(1, 32, 32), new _three.MeshBasicMaterial({
+const ball = new _three.Mesh(new _three.SphereBufferGeometry(0.7, 32, 32), new _three.MeshBasicMaterial({
     map: ballTexture
 }));
-ball.position.set(0, 0, -2); // Adjust the position along the z-axis
+ball.position.set(0, 3, -23); // Adjust the position along the z-axis
 ball.visible = false; //
-trackerGroup.add(ball);
 // Load the texture for the goalkeeper
 const goalkeeperTexture = new _three.TextureLoader().load(player);
 // Create the goalkeeper mesh
@@ -635,7 +634,8 @@ gltfLoader.load(model, (gltf)=>{
     // window.addEventListener("deviceorientation", handleOrientation);
     // Add the goalkeeper to the tracker group
     goalkeeper.visible = true;
-    trackerGroup.add(goalPostModel, goalkeeper);
+    ball.visible = true;
+    trackerGroup.add(goalPostModel, goalkeeper, ball);
 }, undefined, (error)=>console.error(error));
 // Add ambient light for overall illumination
 const ambientLight2 = new _three.AmbientLight(0x404040); // Soft white ambient light
@@ -682,15 +682,13 @@ scene.add(directionalLight);
 // ball and keeper animation code
 function animateBallAndGoalkeeper() {
     function updateAnimation() {
-        const targetBallPosition = new _three.Vector3(getRandomValue(-5, 5), getRandomValue(-2, 2), -2); // Adjust the target position for the ball
-        const targetGoalkeeperPosition = new _three.Vector3(getRandomValue(-6, 6), getRandomValue(2, 4.5), -25); // Adjust the target position for the goalkeeper
+        const targetGoalkeeperPosition = new _three.Vector3(getRandomValue(-6, 6), 2, -25); // Adjust the target position for the goalkeeper
         const animationDuration = 1000; // in milliseconds
         const startTime = Date.now();
         function animate() {
             const currentTime = Date.now();
             const elapsedTime = currentTime - startTime;
             const progress = Math.min(elapsedTime / animationDuration, 1);
-            ball.position.lerpVectors(ball.position, targetBallPosition, progress);
             goalkeeper.position.lerpVectors(goalkeeper.position, targetGoalkeeperPosition, progress);
             if (progress < 1) requestAnimationFrame(animate);
             else updateAnimation(); // Start a new animation cycle
@@ -708,6 +706,44 @@ placementUI.addEventListener("click", ()=>{
     hasPlaced = true;
     animateBallAndGoalkeeper();
 });
+//============BALL SWIPER LOGIC =========
+let swipeStartPos = null;
+let swipeEndPos = null;
+// Set up touch event listeners
+document.addEventListener("touchstart", handleTouchStart, false);
+document.addEventListener("touchend", handleTouchEnd, false);
+function handleTouchStart(event) {
+    // Store the starting position of the swipe
+    swipeStartPos = new _three.Vector2(event.touches[0].clientX, event.touches[0].clientY);
+}
+function handleTouchEnd(event) {
+    if (swipeStartPos) {
+        // Store the ending position of the swipe
+        swipeEndPos = new _three.Vector2(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+        // Calculate the direction and speed based on the difference between start and end positions
+        const direction = new _three.Vector2().subVectors(swipeEndPos, swipeStartPos).normalize();
+        const speed = Math.min(swipeStartPos.distanceTo(swipeEndPos) * 0.01, 1.0);
+        // Shoot the ball in the calculated direction and speed
+        shootBall(direction, speed);
+        // Reset swipe positions for the next swipe
+        swipeStartPos = null;
+        swipeEndPos = null;
+    }
+}
+function shootBall(direction, speed) {
+    const initialBallPosition = new _three.Vector3(0, 0, -2);
+    const targetBallPosition = new _three.Vector3(direction.x * 10, direction.y * 10, -2);
+    const animationDuration = 1000; // in milliseconds
+    const startTime = Date.now();
+    function updateAnimation() {
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / animationDuration, 1);
+        ball.position.lerpVectors(initialBallPosition, targetBallPosition, progress);
+        if (progress < 1) requestAnimationFrame(updateAnimation);
+    }
+    updateAnimation();
+}
 // camera.position.set(0, 0, 10);
 // Set up our render loop
 function render() {
