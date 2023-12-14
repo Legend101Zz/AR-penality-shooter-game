@@ -653,18 +653,58 @@ placementUI.addEventListener("click", ()=>{
         direction: (0, _hammerjsDefault.default).DIRECTION_ALL
     });
     hammer.on("swipe", (event)=>{
+        arrow.visible = true;
         // Using event.direction instead of event.velocityX and event.velocityY
         const direction = new _three.Vector2(event.direction, 0).normalize();
         const speed = Math.min(direction.length(), 1.0);
         // Update the arrow UI based on the calculated direction and speed
-        updateArrowUI(direction, speed);
+        updateArrowUI();
         // Shoot the ball in the calculated direction and speed
         shootBall(direction, speed);
     });
     animateBallAndGoalkeeper();
 });
-let arrowUI;
-arrowUI = document.getElementById("arrow-ui") || document.createElement("div");
+// let arrowUI: HTMLElement;
+// arrowUI = document.getElementById("arrow-ui") || document.createElement("div");
+//=========SCORE LOGIC =========
+let score = 0;
+const scoreUI = document.createElement("div");
+scoreUI.id = "score-ui";
+document.body.appendChild(scoreUI);
+// Add this variable at the beginning of your code
+const missedUI = document.createElement("div");
+missedUI.id = "missed-ui";
+document.body.appendChild(missedUI);
+// Function to show missed UI
+function showMissedUI() {
+    missedUI.textContent = "Missed!";
+    // Add any additional styling or effects as needed
+    // Clear the missed UI after a delay
+    setTimeout(()=>{
+        missedUI.textContent = "";
+    }, 2000); // Adjust the delay as needed
+}
+// Update the score UI function
+function updateScoreUI() {
+    scoreUI.textContent = `Score: ${score}`;
+}
+// Modify the collision detection logic
+// function checkCollision() {
+//   // Check if the ball and goalkeeper have the same position
+//   const playerDistance = ball.position.distanceTo(goalkeeper.position);
+//   if (playerDistance < 1.5) {
+//     // Player catches the ball
+//     return "catch";
+//   }
+//   // Check if the ball and goalpost have the same position
+//   const goalDistance = ball.position.distanceTo(goalPostModel.position);
+//   if (goalDistance < 3) {
+//     // Goal scored
+//     return "goal";
+//   }
+//   // No collision
+//   return "none";
+// }
 //=========ADDING ARROW =========
 // Create an arrow geometry
 const arrowGeometry = new _three.ConeGeometry(0.2, 1, 8);
@@ -676,8 +716,9 @@ const arrowMaterial = new _three.MeshBasicMaterial({
 const arrow = new _three.Mesh(arrowGeometry, arrowMaterial);
 // Set initial position (same as ball's initial position)
 arrow.position.set(0, 1, -5);
+// arrow.visible = false;
 // Add the arrow to the scene
-scene.add(arrow);
+trackerGroup.add(arrow);
 // let swipeStartPos: THREE.Vector2 | null = null;
 // let swipeEndPos: THREE.Vector2 | null = null;
 // function handleTouchStart(event: TouchEvent) {
@@ -709,6 +750,22 @@ scene.add(arrow);
 //     arrowLength / 100
 //   })`;
 // }
+// function updateArrowUI(direction: THREE.Vector2, _speed: number) {
+//   // Convert ball position (Vector3) to a new Vector2
+//   const ballPosition2D = new THREE.Vector2(ball.position.x, ball.position.z);
+//   // Set arrow's position to the ball's position
+//   arrow.position.set(ballPosition2D.x, 0, ballPosition2D.y);
+//   // Calculate arrow rotation based on the ball's movement direction (for example, using goalkeeper's position)
+//   const direction2D = new THREE.Vector2()
+//     .subVectors(
+//       new THREE.Vector2(goalkeeper.position.x, goalkeeper.position.z),
+//       ballPosition2D
+//     )
+//     .normalize();
+//   const arrowRotation = Math.atan2(direction2D.y, direction2D.x);
+//   // Set arrow's rotation
+//   arrow.rotation.set(0, arrowRotation, 0);
+// }
 function updateArrowUI() {
     // Set arrow's position to the ball's position
     arrow.position.copy(ball.position);
@@ -719,6 +776,8 @@ function updateArrowUI() {
     // Set arrow's rotation
     arrow.rotation.set(0, arrowRotation, 0);
 }
+// ===FUNCTION TO HANDLE BALL SHOOTING ======
+// Animation is complete, check for collision
 function shootBall(direction, speed) {
     const initialBallPosition = new _three.Vector3(0, 1, -5);
     const targetBallPosition = new _three.Vector3(direction.x * 2, 1, getRandomValue(-40, -25));
@@ -732,12 +791,58 @@ function shootBall(direction, speed) {
         newPosition.lerpVectors(initialBallPosition, targetBallPosition, progress);
         ball.position.copy(newPosition);
         if (progress < 1) requestAnimationFrame(updateAnimation);
+        else // if (playerDistance < 1.5) {
+        //   // Player catches the ball
+        //   showMissedUI();
+        // } else if (goalDistance < 3) {
+        //   // Goal scored, update the score
+        //   score++;
+        //   updateScoreUI();
+        // }
+        // Reset the ball position after a delay (3-4 seconds)
+        setTimeout(()=>{
+            moveBallToInitialPosition();
+        }, 1000);
     }
     updateAnimation();
 }
+function moveBallToInitialPosition() {
+    const initialBallPosition = new _three.Vector3(0, 1, -5);
+    const animationDuration = 1000;
+    const startTime = Date.now();
+    function updateAnimation() {
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / animationDuration, 1);
+        const newPosition = new _three.Vector3();
+        newPosition.lerpVectors(ball.position, initialBallPosition, progress);
+        ball.position.copy(newPosition);
+        if (progress < 1) requestAnimationFrame(updateAnimation);
+    }
+    updateAnimation();
+}
+// Set up the initial score UI
+updateScoreUI();
 function render() {
     camera.updateFrame(renderer);
     if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, 0, -5);
+    // Check for collision
+    if (goalPostModel && model) {
+        // Calculate distances every frame
+        const playerDistance = ball.position.distanceTo(goalkeeper.position);
+        const goalDistance = ball.position.distanceTo(goalPostModel.position);
+        console.log("distances", playerDistance, goalDistance);
+        if (playerDistance < 1.5) {
+            // Player catches the ball
+            showMissedUI();
+            moveBallToInitialPosition(); // Reset the ball position after a delay
+        } else if (goalDistance < 3) {
+            // Goal scored, update the score
+            score++;
+            updateScoreUI();
+            moveBallToInitialPosition(); // Reset the ball position after a delay
+        }
+    }
     updateArrowUI();
     renderer.render(scene, camera);
 }

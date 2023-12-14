@@ -15,6 +15,23 @@ body {
   border: 2px solid white; /* Add a border for better visibility */
 /* } */
 
+#score-ui {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: white;
+  font-size: 24px;
+}
+
+#missed-ui {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: red;
+  font-size: 36px;
+}
+
 #zappar-placement-ui {
   position: absolute;
   bottom: 30px;
