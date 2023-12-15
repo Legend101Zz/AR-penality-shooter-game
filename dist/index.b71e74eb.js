@@ -572,6 +572,34 @@ const ball = new _three.Mesh(new _three.SphereBufferGeometry(0.6, 32, 32), new _
 }));
 ball.position.set(0, 1, -5);
 ball.visible = false;
+//===POINT===
+// Create a point geometry
+const pointGeometry = new _three.SphereBufferGeometry(0.2, 8, 8);
+// Create a point material
+const pointMaterial = new _three.MeshBasicMaterial({
+    color: 0xff0000
+});
+// Create the point mesh
+const shootingPoint = new _three.Mesh(pointGeometry, pointMaterial);
+shootingPoint.visible = false; // Initially invisible
+function animateShootingPoint() {
+    const animationDuration = 5000; // Time taken for the point to cover the whole goal post
+    const startTime = Date.now();
+    function updateAnimation() {
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - startTime;
+        const progress = elapsedTime % animationDuration / animationDuration;
+        // Update the position of the shooting point
+        const angle = 2 * Math.PI * progress;
+        const radius = 3; // Adjust the radius based on your goal post size
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        shootingPoint.position.set(x, y, 0);
+        requestAnimationFrame(updateAnimation);
+    }
+    updateAnimation();
+}
+//===GOALKEEPER===
 const goalkeeperTexture = new _three.TextureLoader().load(player);
 const goalkeeperGeometry = new _three.PlaneBufferGeometry(4, 4);
 const goalkeeperMaterial = new _three.MeshBasicMaterial({
@@ -612,6 +640,7 @@ gltfLoader.load(model, (gltf)=>{
             m.frustumCulled = false;
         }
     });
+    gltf.scene.add(shootingPoint);
     goalkeeper.visible = true;
     ball.visible = true;
     trackerGroup.add(goalPostModel, goalkeeper, ball);
@@ -646,6 +675,10 @@ const placementUI = document.getElementById("zappar-placement-ui") || document.c
 placementUI.addEventListener("click", ()=>{
     placementUI.remove();
     hasPlaced = true;
+    // Make the shooting point visible when placement is done
+    shootingPoint.visible = true;
+    // Start animating the shooting point
+    animateShootingPoint();
     // Set up Hammer.js for gesture recognition
     const hammer = new (0, _hammerjsDefault.default)(document.body);
     // Enable swipe recognizer
@@ -823,6 +856,7 @@ function moveBallToInitialPosition() {
 }
 // Set up the initial score UI
 updateScoreUI();
+camera.position.z = 5;
 function render() {
     camera.updateFrame(renderer);
     if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, 0, -5);

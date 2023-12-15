@@ -52,6 +52,42 @@ const ball = new THREE.Mesh(
 ball.position.set(0, 1, -5);
 ball.visible = false;
 
+//===POINT===
+
+// Create a point geometry
+const pointGeometry = new THREE.SphereBufferGeometry(0.2, 8, 8);
+
+// Create a point material
+const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+
+// Create the point mesh
+const shootingPoint = new THREE.Mesh(pointGeometry, pointMaterial);
+shootingPoint.visible = false; // Initially invisible
+
+function animateShootingPoint() {
+  const animationDuration = 5000; // Time taken for the point to cover the whole goal post
+  const startTime = Date.now();
+
+  function updateAnimation() {
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - startTime;
+    const progress = (elapsedTime % animationDuration) / animationDuration;
+
+    // Update the position of the shooting point
+    const angle = 2 * Math.PI * progress;
+    const radius = 3; // Adjust the radius based on your goal post size
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
+    shootingPoint.position.set(x, y, 0);
+
+    requestAnimationFrame(updateAnimation);
+  }
+
+  updateAnimation();
+}
+
+//===GOALKEEPER===
+
 const goalkeeperTexture = new THREE.TextureLoader().load(player);
 
 const goalkeeperGeometry = new THREE.PlaneBufferGeometry(4, 4);
@@ -107,7 +143,7 @@ gltfLoader.load(
         m.frustumCulled = false;
       }
     });
-
+    gltf.scene.add(shootingPoint);
     goalkeeper.visible = true;
     ball.visible = true;
     trackerGroup.add(goalPostModel, goalkeeper, ball);
@@ -169,6 +205,12 @@ const placementUI =
 placementUI.addEventListener("click", () => {
   placementUI.remove();
   hasPlaced = true;
+
+  // Make the shooting point visible when placement is done
+  shootingPoint.visible = true;
+
+  // Start animating the shooting point
+  animateShootingPoint();
 
   // Set up Hammer.js for gesture recognition
   const hammer = new Hammer(document.body);
@@ -408,6 +450,8 @@ function moveBallToInitialPosition() {
 
 // Set up the initial score UI
 updateScoreUI();
+
+camera.position.z = 5;
 
 function render() {
   camera.updateFrame(renderer);
