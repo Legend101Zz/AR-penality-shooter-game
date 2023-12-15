@@ -55,14 +55,14 @@ ball.visible = false;
 //===POINT===
 
 // Create a point geometry
-const pointGeometry = new THREE.SphereBufferGeometry(0.1, 8, 8);
+const pointGeometry = new THREE.SphereBufferGeometry(0.2, 8, 8);
 
 // Create a point material
 const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 
 // Create the point mesh
 const shootingPoint = new THREE.Mesh(pointGeometry, pointMaterial);
-shootingPoint.position.set(-6, -6, 0);
+// shootingPoint.position.set(-6, -6, 0);
 shootingPoint.visible = false; // Initially invisible
 
 function animateShootingPoint() {
@@ -75,8 +75,8 @@ function animateShootingPoint() {
     const progress = (elapsedTime % animationDuration) / animationDuration;
 
     // Define the rectangular path
-    const rectWidth = 9;
-    const rectHeight = 3;
+    const rectWidth = 20;
+    const rectHeight = 5;
 
     let x, y;
 
@@ -99,7 +99,7 @@ function animateShootingPoint() {
     }
 
     // Update the position of the shooting point
-    shootingPoint.position.set(-20, y - 2, x + 2);
+    shootingPoint.position.set(-15, y - 3, x - 2);
 
     requestAnimationFrame(updateAnimation);
   }
@@ -246,7 +246,7 @@ placementUI.addEventListener("click", () => {
     const speed = parseFloat(speedControlBar.value);
 
     // Update the arrow UI based on the calculated direction and speed
-    updateArrowUI(speed);
+    // updateArrowUI(speed);
 
     // Shoot the ball in the calculated direction and speed
     shootBall(direction, speed);
@@ -310,19 +310,19 @@ function updateScoreUI() {
 //=========ADDING ARROW =========
 
 // Create an arrow geometry
-const arrowGeometry = new THREE.ConeGeometry(0.2, 1, 8);
+// const arrowGeometry = new THREE.ConeGeometry(0.2, 1, 8);
 
-// Create an arrow material
-const arrowMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+// // Create an arrow material
+// const arrowMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
-// Create the arrow mesh
-const arrow = new THREE.Mesh(arrowGeometry, arrowMaterial);
+// // Create the arrow mesh
+// const arrow = new THREE.Mesh(arrowGeometry, arrowMaterial);
 
-// Set initial position (same as ball's initial position)
-arrow.position.set(0, 1, -5);
-arrow.visible = false;
-// Add the arrow to the scene
-trackerGroup.add(arrow);
+// // Set initial position (same as ball's initial position)
+// arrow.position.set(0, 1, -5);
+// arrow.visible = false;
+// // Add the arrow to the scene
+// trackerGroup.add(arrow);
 
 // let swipeStartPos: THREE.Vector2 | null = null;
 // let swipeEndPos: THREE.Vector2 | null = null;
@@ -384,13 +384,13 @@ trackerGroup.add(arrow);
 //   arrow.rotation.set(0, arrowRotation, 0);
 // }
 
-function updateArrowUI(speed: number) {
-  const arrowLength = Math.min(speed * 100, 100);
-  const arrowRotation = Math.atan2(arrow.position.z, arrow.position.x);
+// function updateArrowUI(speed: number) {
+//   const arrowLength = Math.min(speed * 100, 100);
+//   const arrowRotation = Math.atan2(arrow.position.z, arrow.position.x);
 
-  arrow.scale.set(1, 1, arrowLength / 100);
-  arrow.rotation.set(0, arrowRotation, 0);
-}
+//   arrow.scale.set(1, 1, arrowLength / 100);
+//   arrow.rotation.set(0, arrowRotation, 0);
+// }
 
 // Add this variable at the beginning of your code
 let speedControlBar: HTMLElement;
@@ -516,6 +516,6 @@ function render() {
       moveBallToInitialPosition(); // Reset the ball position after a delay
     }
   }
-  updateArrowUI(5);
+
   renderer.render(scene, camera);
 }

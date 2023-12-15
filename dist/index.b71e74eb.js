@@ -574,14 +574,14 @@ ball.position.set(0, 1, -5);
 ball.visible = false;
 //===POINT===
 // Create a point geometry
-const pointGeometry = new _three.SphereBufferGeometry(0.1, 8, 8);
+const pointGeometry = new _three.SphereBufferGeometry(0.2, 8, 8);
 // Create a point material
 const pointMaterial = new _three.MeshBasicMaterial({
     color: 0xff0000
 });
 // Create the point mesh
 const shootingPoint = new _three.Mesh(pointGeometry, pointMaterial);
-shootingPoint.position.set(-6, -6, 0);
+// shootingPoint.position.set(-6, -6, 0);
 shootingPoint.visible = false; // Initially invisible
 function animateShootingPoint() {
     const animationDuration = 5000; // Time taken for the point to cover the whole goal post
@@ -591,8 +591,8 @@ function animateShootingPoint() {
         const elapsedTime = currentTime - startTime;
         const progress = elapsedTime % animationDuration / animationDuration;
         // Define the rectangular path
-        const rectWidth = 9;
-        const rectHeight = 3;
+        const rectWidth = 20;
+        const rectHeight = 5;
         let x, y;
         if (progress < 0.25) {
             // Move to the right
@@ -612,7 +612,7 @@ function animateShootingPoint() {
             y = rectHeight - rectHeight * (progress - 0.75) * 4;
         }
         // Update the position of the shooting point
-        shootingPoint.position.set(-20, y - 2, x + 2);
+        shootingPoint.position.set(-15, y - 3, x - 2);
         requestAnimationFrame(updateAnimation);
     }
     updateAnimation();
@@ -709,7 +709,7 @@ placementUI.addEventListener("click", ()=>{
         const direction = new _three.Vector2(event.direction, 0).normalize();
         const speed = parseFloat(speedControlBar.value);
         // Update the arrow UI based on the calculated direction and speed
-        updateArrowUI(speed);
+        // updateArrowUI(speed);
         // Shoot the ball in the calculated direction and speed
         shootBall(direction, speed);
     });
@@ -758,18 +758,16 @@ function updateScoreUI() {
 // }
 //=========ADDING ARROW =========
 // Create an arrow geometry
-const arrowGeometry = new _three.ConeGeometry(0.2, 1, 8);
-// Create an arrow material
-const arrowMaterial = new _three.MeshBasicMaterial({
-    color: 0xffffff
-});
-// Create the arrow mesh
-const arrow = new _three.Mesh(arrowGeometry, arrowMaterial);
-// Set initial position (same as ball's initial position)
-arrow.position.set(0, 1, -5);
-arrow.visible = false;
-// Add the arrow to the scene
-trackerGroup.add(arrow);
+// const arrowGeometry = new THREE.ConeGeometry(0.2, 1, 8);
+// // Create an arrow material
+// const arrowMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+// // Create the arrow mesh
+// const arrow = new THREE.Mesh(arrowGeometry, arrowMaterial);
+// // Set initial position (same as ball's initial position)
+// arrow.position.set(0, 1, -5);
+// arrow.visible = false;
+// // Add the arrow to the scene
+// trackerGroup.add(arrow);
 // let swipeStartPos: THREE.Vector2 | null = null;
 // let swipeEndPos: THREE.Vector2 | null = null;
 // function handleTouchStart(event: TouchEvent) {
@@ -817,12 +815,12 @@ trackerGroup.add(arrow);
 //   // Set arrow's rotation
 //   arrow.rotation.set(0, arrowRotation, 0);
 // }
-function updateArrowUI(speed) {
-    const arrowLength = Math.min(speed * 100, 100);
-    const arrowRotation = Math.atan2(arrow.position.z, arrow.position.x);
-    arrow.scale.set(1, 1, arrowLength / 100);
-    arrow.rotation.set(0, arrowRotation, 0);
-}
+// function updateArrowUI(speed: number) {
+//   const arrowLength = Math.min(speed * 100, 100);
+//   const arrowRotation = Math.atan2(arrow.position.z, arrow.position.x);
+//   arrow.scale.set(1, 1, arrowLength / 100);
+//   arrow.rotation.set(0, arrowRotation, 0);
+// }
 // Add this variable at the beginning of your code
 let speedControlBar;
 // Function to create and initialize the speed control bar
@@ -915,7 +913,6 @@ function render() {
             moveBallToInitialPosition(); // Reset the ball position after a delay
         }
     }
-    updateArrowUI(5);
     renderer.render(scene, camera);
 }
 
