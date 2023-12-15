@@ -593,9 +593,9 @@ function animateShootingPoint() {
         const elapsedTime = currentTime - startTime;
         const progress = elapsedTime % animationDuration / animationDuration;
         // Define the rectangular path
-        const rectWidth = 25;
+        const rectWidth = 12;
         const rectHeight = 5;
-        let x, y;
+        let x = 15, y = 0;
         if (progress < 0.25) {
             // Move to the right
             x = rectWidth * progress * 4;
@@ -614,7 +614,7 @@ function animateShootingPoint() {
             y = rectHeight - rectHeight * (progress - 0.75) * 4;
         }
         // Update the position of the shooting point
-        shootingPoint.position.set(-15, y - 3, x - 2);
+        shootingPoint.position.set(-10, y - 3, x - 2);
         requestAnimationFrame(updateAnimation);
     }
     updateAnimation();
