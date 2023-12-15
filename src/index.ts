@@ -62,6 +62,7 @@ const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 
 // Create the point mesh
 const shootingPoint = new THREE.Mesh(pointGeometry, pointMaterial);
+shootingPoint.position.set(-6, -6, 0);
 shootingPoint.visible = false; // Initially invisible
 
 function animateShootingPoint() {
@@ -74,7 +75,7 @@ function animateShootingPoint() {
     const progress = (elapsedTime % animationDuration) / animationDuration;
 
     // Define the rectangular path
-    const rectWidth = 6;
+    const rectWidth = 9;
     const rectHeight = 3;
 
     let x, y;
@@ -98,7 +99,7 @@ function animateShootingPoint() {
     }
 
     // Update the position of the shooting point
-    shootingPoint.position.set(-12, y, x);
+    shootingPoint.position.set(-20, y - 2, x + 2);
 
     requestAnimationFrame(updateAnimation);
   }
@@ -239,7 +240,7 @@ placementUI.addEventListener("click", () => {
   hammer.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
 
   hammer.on("swipe", (event) => {
-    arrow.visible = true;
+    // arrow.visible = true;
     // Using event.direction instead of event.velocityX and event.velocityY
     const direction = new THREE.Vector2(event.direction, 0).normalize();
     const speed = parseFloat(speedControlBar.value);

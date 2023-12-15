@@ -581,6 +581,7 @@ const pointMaterial = new _three.MeshBasicMaterial({
 });
 // Create the point mesh
 const shootingPoint = new _three.Mesh(pointGeometry, pointMaterial);
+shootingPoint.position.set(-6, -6, 0);
 shootingPoint.visible = false; // Initially invisible
 function animateShootingPoint() {
     const animationDuration = 5000; // Time taken for the point to cover the whole goal post
@@ -590,7 +591,7 @@ function animateShootingPoint() {
         const elapsedTime = currentTime - startTime;
         const progress = elapsedTime % animationDuration / animationDuration;
         // Define the rectangular path
-        const rectWidth = 6;
+        const rectWidth = 9;
         const rectHeight = 3;
         let x, y;
         if (progress < 0.25) {
@@ -611,7 +612,7 @@ function animateShootingPoint() {
             y = rectHeight - rectHeight * (progress - 0.75) * 4;
         }
         // Update the position of the shooting point
-        shootingPoint.position.set(-12, y, x);
+        shootingPoint.position.set(-20, y - 2, x + 2);
         requestAnimationFrame(updateAnimation);
     }
     updateAnimation();
@@ -703,7 +704,7 @@ placementUI.addEventListener("click", ()=>{
         direction: (0, _hammerjsDefault.default).DIRECTION_ALL
     });
     hammer.on("swipe", (event)=>{
-        arrow.visible = true;
+        // arrow.visible = true;
         // Using event.direction instead of event.velocityX and event.velocityY
         const direction = new _three.Vector2(event.direction, 0).normalize();
         const speed = parseFloat(speedControlBar.value);
