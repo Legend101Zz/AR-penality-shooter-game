@@ -10,15 +10,16 @@ const footImg = new URL("../assets/football.png", import.meta.url).href;
 const model = new URL("../assets/football_net.glb", import.meta.url).href;
 const fieldModel = new URL("../assets/football_field.glb", import.meta.url)
   .href;
-const player = new URL("../assets/player.png", import.meta.url).href;
+const player = new URL("../assets/keep2.png", import.meta.url).href;
 
 let field: any;
 let goalPostModel: any;
+let hasPlaced = false;
+let ballShooted = false;
+let ballCollisionDetected = false;
 
 const renderer = new THREE.WebGLRenderer();
 document.body.appendChild(renderer.domElement);
-let hasPlaced = false;
-
 renderer.setSize(window.innerWidth, window.innerHeight);
 window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -75,7 +76,7 @@ function animateShootingPoint() {
     const progress = (elapsedTime % animationDuration) / animationDuration;
 
     // Define the rectangular path
-    const rectWidth = 20;
+    const rectWidth = 25;
     const rectHeight = 5;
 
     let x, y;
@@ -447,20 +448,19 @@ function shootBall(direction: THREE.Vector2, speed: number) {
     const currentTime = Date.now();
     const elapsedTime = currentTime - startTime;
     const progress = Math.min(elapsedTime / animationDuration, 1);
-
     const newPosition = new THREE.Vector3();
     newPosition.lerpVectors(initialBallPosition, targetBallPosition, progress);
     ball.position.copy(newPosition);
-
-    if (progress < 1) {
-      requestAnimationFrame(updateAnimation);
-    } else {
-      // Reset the ball position after a delay (3-4 seconds)
-      setTimeout(() => {
-        moveBallToInitialPosition();
-      }, 1000);
-
-      // Continue with any post-animation actions here
+    if (!ballShooted) {
+      if (progress < 1) {
+        requestAnimationFrame(updateAnimation);
+      } else {
+        // Reset the ball position after a delay (3-4 seconds)
+        showMissedUI();
+        setTimeout(() => {
+          moveBallToInitialPosition();
+        }, 600);
+      }
     }
   }
 
@@ -497,20 +497,24 @@ updateScoreUI();
 
 function render() {
   camera.updateFrame(renderer);
-  if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, -5, -7);
+  ballShooted = false;
+  if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, -3, -20);
 
-  // Check for collision
-  if (goalPostModel && model) {
+  if (goalPostModel && model && !ballCollisionDetected) {
     // Calculate distances every frame
     const playerDistance = ball.position.distanceTo(goalkeeper.position);
     const goalDistance = ball.position.distanceTo(goalPostModel.position);
-    console.log("distances", playerDistance, goalDistance);
-    if (playerDistance < 1.5) {
+
+    if (playerDistance < 1.9) {
       // Player catches the ball
+      ballCollisionDetected = true;
+      ballShooted = true;
       showMissedUI();
       moveBallToInitialPosition(); // Reset the ball position after a delay
-    } else if (goalDistance < 3) {
+    } else if (goalDistance < 3.5) {
       // Goal scored, update the score
+      ballCollisionDetected = true;
+      ballShooted = true;
       score++;
       updateScoreUI();
       moveBallToInitialPosition(); // Reset the ball position after a delay

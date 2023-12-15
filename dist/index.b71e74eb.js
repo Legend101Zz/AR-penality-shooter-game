@@ -543,12 +543,14 @@ var _hammerjsDefault = parcelHelpers.interopDefault(_hammerjs);
 const footImg = new URL(require("62b2ad1e39b9a5b9")).href;
 const model = new URL(require("7a2f5b54650a2bfc")).href;
 const fieldModel = new URL(require("ee062f22be023520")).href;
-const player = new URL(require("4faf0dae2d65ecc2")).href;
+const player = new URL(require("63c3f3cf533e999a")).href;
 let field;
 let goalPostModel;
+let hasPlaced = false;
+let ballShooted = false;
+let ballCollisionDetected = false;
 const renderer = new _three.WebGLRenderer();
 document.body.appendChild(renderer.domElement);
-let hasPlaced = false;
 renderer.setSize(window.innerWidth, window.innerHeight);
 window.addEventListener("resize", ()=>{
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -591,7 +593,7 @@ function animateShootingPoint() {
         const elapsedTime = currentTime - startTime;
         const progress = elapsedTime % animationDuration / animationDuration;
         // Define the rectangular path
-        const rectWidth = 20;
+        const rectWidth = 25;
         const rectHeight = 5;
         let x, y;
         if (progress < 0.25) {
@@ -868,11 +870,16 @@ function shootBall(direction, speed) {
         const newPosition = new _three.Vector3();
         newPosition.lerpVectors(initialBallPosition, targetBallPosition, progress);
         ball.position.copy(newPosition);
-        if (progress < 1) requestAnimationFrame(updateAnimation);
-        else // Reset the ball position after a delay (3-4 seconds)
-        setTimeout(()=>{
-            moveBallToInitialPosition();
-        }, 1000);
+        if (!ballShooted) {
+            if (progress < 1) requestAnimationFrame(updateAnimation);
+            else {
+                // Reset the ball position after a delay (3-4 seconds)
+                showMissedUI();
+                setTimeout(()=>{
+                    moveBallToInitialPosition();
+                }, 600);
+            }
+        }
     }
     updateAnimation();
 }
@@ -895,19 +902,22 @@ function moveBallToInitialPosition() {
 updateScoreUI();
 function render() {
     camera.updateFrame(renderer);
-    if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, -5, -7);
-    // Check for collision
-    if (goalPostModel && model) {
+    ballShooted = false;
+    if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, -3, -20);
+    if (goalPostModel && model && !ballCollisionDetected) {
         // Calculate distances every frame
         const playerDistance = ball.position.distanceTo(goalkeeper.position);
         const goalDistance = ball.position.distanceTo(goalPostModel.position);
-        console.log("distances", playerDistance, goalDistance);
-        if (playerDistance < 1.5) {
+        if (playerDistance < 1.9) {
             // Player catches the ball
+            ballCollisionDetected = true;
+            ballShooted = true;
             showMissedUI();
             moveBallToInitialPosition(); // Reset the ball position after a delay
-        } else if (goalDistance < 3) {
+        } else if (goalDistance < 3.5) {
             // Goal scored, update the score
+            ballCollisionDetected = true;
+            ballShooted = true;
             score++;
             updateScoreUI();
             moveBallToInitialPosition(); // Reset the ball position after a delay
@@ -916,7 +926,7 @@ function render() {
     renderer.render(scene, camera);
 }
 
-},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","62b2ad1e39b9a5b9":"bc1aq","7a2f5b54650a2bfc":"dzWQF","ee062f22be023520":"jNSdD","4faf0dae2d65ecc2":"hfktC","hammerjs":"lHwvQ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","62b2ad1e39b9a5b9":"bc1aq","7a2f5b54650a2bfc":"dzWQF","ee062f22be023520":"jNSdD","hammerjs":"lHwvQ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","63c3f3cf533e999a":"g4D1J"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -54653,9 +54663,6 @@ module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "footba
 },{"./helpers/bundle-url":"lgJ39"}],"jNSdD":[function(require,module,exports) {
 module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football_field.0b6176e5.glb" + "?" + Date.now();
 
-},{"./helpers/bundle-url":"lgJ39"}],"hfktC":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "player.49098853.png" + "?" + Date.now();
-
 },{"./helpers/bundle-url":"lgJ39"}],"lHwvQ":[function(require,module,exports) {
 /*! Hammer.JS - v2.0.7 - 2016-04-22
  * http://hammerjs.github.io/
@@ -56653,6 +56660,9 @@ module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "player
     else window1[exportName] = Hammer;
 })(window, document, "Hammer");
 
-},{}]},["4cEIE","h7u1C"], "h7u1C", "parcelRequire5ba9")
+},{}],"g4D1J":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "keep2.6617ec20.png" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}]},["4cEIE","h7u1C"], "h7u1C", "parcelRequire5ba9")
 
 //# sourceMappingURL=index.b71e74eb.js.map
