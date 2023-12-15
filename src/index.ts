@@ -55,7 +55,7 @@ ball.visible = false;
 //===POINT===
 
 // Create a point geometry
-const pointGeometry = new THREE.SphereBufferGeometry(0.2, 8, 8);
+const pointGeometry = new THREE.SphereBufferGeometry(0.1, 8, 8);
 
 // Create a point material
 const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
@@ -73,12 +73,32 @@ function animateShootingPoint() {
     const elapsedTime = currentTime - startTime;
     const progress = (elapsedTime % animationDuration) / animationDuration;
 
+    // Define the rectangular path
+    const rectWidth = 6;
+    const rectHeight = 3;
+
+    let x, y;
+
+    if (progress < 0.25) {
+      // Move to the right
+      x = rectWidth * progress * 4;
+      y = 0;
+    } else if (progress < 0.5) {
+      // Move up
+      x = rectWidth;
+      y = rectHeight * (progress - 0.25) * 4;
+    } else if (progress < 0.75) {
+      // Move to the left
+      x = rectWidth - rectWidth * (progress - 0.5) * 4;
+      y = rectHeight;
+    } else {
+      // Move down
+      x = 0;
+      y = rectHeight - rectHeight * (progress - 0.75) * 4;
+    }
+
     // Update the position of the shooting point
-    const angle = 2 * Math.PI * progress;
-    const radius = 3; // Adjust the radius based on your goal post size
-    const x = Math.cos(angle) * radius;
-    const y = Math.sin(angle) * radius;
-    shootingPoint.position.set(x, y, 0);
+    shootingPoint.position.set(-12, y, x);
 
     requestAnimationFrame(updateAnimation);
   }
@@ -222,10 +242,10 @@ placementUI.addEventListener("click", () => {
     arrow.visible = true;
     // Using event.direction instead of event.velocityX and event.velocityY
     const direction = new THREE.Vector2(event.direction, 0).normalize();
-    const speed = Math.min(direction.length(), 1.0);
+    const speed = parseFloat(speedControlBar.value);
 
     // Update the arrow UI based on the calculated direction and speed
-    updateArrowUI();
+    updateArrowUI(speed);
 
     // Shoot the ball in the calculated direction and speed
     shootBall(direction, speed);
@@ -299,7 +319,7 @@ const arrow = new THREE.Mesh(arrowGeometry, arrowMaterial);
 
 // Set initial position (same as ball's initial position)
 arrow.position.set(0, 1, -5);
-// arrow.visible = false;
+arrow.visible = false;
 // Add the arrow to the scene
 trackerGroup.add(arrow);
 
@@ -363,31 +383,63 @@ trackerGroup.add(arrow);
 //   arrow.rotation.set(0, arrowRotation, 0);
 // }
 
-function updateArrowUI() {
-  // Set arrow's position to the ball's position
-  arrow.position.copy(ball.position);
+function updateArrowUI(speed: number) {
+  const arrowLength = Math.min(speed * 100, 100);
+  const arrowRotation = Math.atan2(arrow.position.z, arrow.position.x);
 
-  // Calculate arrow rotation based on the ball's movement direction (for example, using goalkeeper's position)
-  const direction = new THREE.Vector3();
-  direction.subVectors(goalkeeper.position, ball.position).normalize();
-  const arrowRotation = Math.atan2(direction.z, direction.x);
-
-  // Set arrow's rotation
+  arrow.scale.set(1, 1, arrowLength / 100);
   arrow.rotation.set(0, arrowRotation, 0);
 }
+
+// Add this variable at the beginning of your code
+let speedControlBar: HTMLElement;
+
+// Function to create and initialize the speed control bar
+function createSpeedControlBar() {
+  speedControlBar = document.createElement("input");
+  speedControlBar.type = "range";
+  speedControlBar.min = "0";
+  speedControlBar.max = "1";
+  speedControlBar.step = "0.01";
+  speedControlBar.value = "0.5"; // Set the initial speed
+
+  speedControlBar.style.position = "absolute";
+  speedControlBar.style.bottom = "10px";
+  speedControlBar.style.left = "50%";
+  speedControlBar.style.transform = "translateX(-50%)";
+  speedControlBar.style.width = "200px";
+
+  // Add an event listener to update the speed when the user adjusts the slider
+  speedControlBar.addEventListener("input", (event) => {
+    const speed = parseFloat((event.target as HTMLInputElement).value);
+    updateArrowUI(speed);
+  });
+
+  document.body.appendChild(speedControlBar);
+}
+
+// Create and initialize the speed control bar
+createSpeedControlBar();
+
 // ===FUNCTION TO HANDLE BALL SHOOTING ======
 
 // Animation is complete, check for collision
-
 function shootBall(direction: THREE.Vector2, speed: number) {
   const initialBallPosition = new THREE.Vector3(0, 1, -5);
-  const targetBallPosition = new THREE.Vector3(
-    direction.x * 2,
-    1,
-    getRandomValue(-40, -25)
-  );
 
-  const animationDuration = 1000;
+  // Get the shooting point's position and rotation
+  const shootingPointPosition = new THREE.Vector3();
+  const shootingPointRotation = new THREE.Quaternion();
+  shootingPoint.getWorldPosition(shootingPointPosition);
+  shootingPoint.getWorldQuaternion(shootingPointRotation);
+
+  // Set the targetBallPosition based on the shooting point's position and rotation
+  const targetBallPosition = new THREE.Vector3().copy(initialBallPosition);
+  targetBallPosition.applyQuaternion(shootingPointRotation);
+  targetBallPosition.add(shootingPointPosition);
+
+  const distance = initialBallPosition.distanceTo(targetBallPosition);
+  const animationDuration = (distance / speed) * 30; // Adjust the duration based on speed
   const startTime = Date.now();
 
   function updateAnimation() {
@@ -402,15 +454,6 @@ function shootBall(direction: THREE.Vector2, speed: number) {
     if (progress < 1) {
       requestAnimationFrame(updateAnimation);
     } else {
-      // if (playerDistance < 1.5) {
-      //   // Player catches the ball
-      //   showMissedUI();
-      // } else if (goalDistance < 3) {
-      //   // Goal scored, update the score
-      //   score++;
-      //   updateScoreUI();
-      // }
-
       // Reset the ball position after a delay (3-4 seconds)
       setTimeout(() => {
         moveBallToInitialPosition();
@@ -451,11 +494,9 @@ function moveBallToInitialPosition() {
 // Set up the initial score UI
 updateScoreUI();
 
-camera.position.z = 5;
-
 function render() {
   camera.updateFrame(renderer);
-  if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, 0, -5);
+  if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, -5, -7);
 
   // Check for collision
   if (goalPostModel && model) {
@@ -474,6 +515,6 @@ function render() {
       moveBallToInitialPosition(); // Reset the ball position after a delay
     }
   }
-  updateArrowUI();
+  updateArrowUI(5);
   renderer.render(scene, camera);
 }
