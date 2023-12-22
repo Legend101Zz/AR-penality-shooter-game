@@ -5,8 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Football Goalkeeper Game</title>
     <style>body {
+  background-color: #f4f4f4;
   margin: 0;
+  font-family: Arial, sans-serif;
   overflow: hidden;
+}
+
+#zappar-placement-ui {
+  text-align: center;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px #0000004d;
+}
+
+#instructionsModal {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 20px #00000080;
+}
+
+.modal-title {
+  color: #333;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.modal-body {
+  color: #555;
+  margin-top: -40px;
+  font-size: 10px;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+ul li {
+  margin-bottom: 12px;
+}
+
+.modal-footer {
+  text-align: center;
+}
+
+#startGameButton {
+  color: #fff;
+  cursor: pointer;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  transition: background-color .3s;
+}
+
+#startGameButton:hover {
+  background-color: #0056b3;
+}
+
+#arrow-ui {
+  z-index: 1;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media screen and (max-width: 600px) {
+  #zappar-placement-ui, #instructionsModal {
+    width: 90%;
+  }
+
+  #startGameButton {
+    font-size: 16px;
+  }
 }
 
 </style>
@@ -16,6 +95,47 @@
     <div id="arrow-ui"></div>
     <div id="zappar-placement-ui">
       Position the Field and let the game Begin
+
+      <div id="instructionsModal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Instructions</h5>
+            </div>
+            <br>
+            <div class="modal-body">
+              <p>
+                </p><p>
+                 <b> Welcome to the Football Goalkeeper Game! Before you start 
+                  playing, please read the instructions below:
+                </b>
+                </p>
+                
+              <p></p>
+              <br>
+              <ul>
+                
+                <li>Wait for the game to start after positioning the field.</li>
+                <li>Swipe on the screen to shoot the ball.</li>
+                <li>use the red dot to as direction arrow for shooting.</li>
+                <li>Adjust the speed of shoot using the controller given.</li>
+                <li>
+                  Your goal is to score points by shooting the ball into the
+                  goal.
+                </li>
+                <li>
+                  Watch out for the goalkeeper and try to avoid being caught!
+                </li>
+              </ul>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="startGameButton">
+                Start Game
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

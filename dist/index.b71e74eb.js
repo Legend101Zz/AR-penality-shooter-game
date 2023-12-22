@@ -540,10 +540,10 @@ var _indexCss = require("./index.css");
 // Import Hammer.js
 var _hammerjs = require("hammerjs");
 var _hammerjsDefault = parcelHelpers.interopDefault(_hammerjs);
-const footImg = new URL(require("62b2ad1e39b9a5b9")).href;
-const model = new URL(require("7a2f5b54650a2bfc")).href;
-const fieldModel = new URL(require("ee062f22be023520")).href;
-const player = new URL(require("63c3f3cf533e999a")).href;
+const footImg = new URL(require("16471dbe4b7438ad")).href;
+const model = new URL(require("5cfd7f4445224980")).href;
+const fieldModel = new URL(require("93c5239defc99dd0")).href;
+const player = new URL(require("79f43e7d436e0f3b")).href;
 let field;
 let goalPostModel;
 let hasPlaced = false;
@@ -649,15 +649,18 @@ gltfLoader.load(fieldModel, (gltf)=>{
 gltfLoader.load(model, (gltf)=>{
     goalPostModel = gltf.scene;
     gltf.scene.scale.set(3, 3, 3);
-    gltf.scene.position.set(0, 3.5, -25);
+    gltf.scene.position.set(0, 3.51, -25);
     gltf.scene.rotation.set(0, -Math.PI / 2, 0);
     gltf.scene.traverse(function(child) {
-        if (child.isMesh) {
-            let m = child;
-            child.castShadow = true;
-            child.receiveShadow = true;
-            m.castShadow = true;
-            m.frustumCulled = false;
+        if (child instanceof _three.Mesh) {
+            // Adjust shininess and specular properties
+            child.material.shininess = 1; // Experiment with different values
+            child.material.specular = new _three.Color(0xff0000); // Set the specular color to black
+            child.material.depthBias = 0.02;
+            // Enable flat shading for a less shiny appearance
+            child.material.flatShading = true;
+            // Optionally, adjust other material properties such as emissive color
+            child.material.emissive = new _three.Color(0xfff);
         }
     });
     gltf.scene.add(shootingPoint);
@@ -720,14 +723,35 @@ placementUI.addEventListener("click", ()=>{
 // let arrowUI: HTMLElement;
 // arrowUI = document.getElementById("arrow-ui") || document.createElement("div");
 //=========SCORE LOGIC =========
+const blackBackground = document.createElement("div");
+blackBackground.style.position = "absolute";
+blackBackground.style.bottom = "10px";
+blackBackground.style.left = "50%";
+blackBackground.style.transform = "translateX(-50%)";
+blackBackground.style.width = "200px";
+blackBackground.style.padding = "10px";
+blackBackground.style.backgroundColor = "rgba(0, 0, 0, 0.7)"; // Black with 70% transparency
+// Append the black background to the document body
+document.body.appendChild(blackBackground);
 let score = 0;
 const scoreUI = document.createElement("div");
 scoreUI.id = "score-ui";
+scoreUI.style.position = "absolute";
+scoreUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+scoreUI.style.color = "#fff";
 document.body.appendChild(scoreUI);
-// Add this variable at the beginning of your code
 const missedUI = document.createElement("div");
 missedUI.id = "missed-ui";
+missedUI.style.position = "absolute";
+missedUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+missedUI.style.color = "#ff0000";
 document.body.appendChild(missedUI);
+const scoredUI = document.createElement("div");
+scoredUI.id = "scored-ui";
+scoredUI.style.position = "absolute";
+scoredUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+scoredUI.style.color = "#ff0000";
+document.body.appendChild(scoredUI);
 // Function to show missed UI
 function showMissedUI() {
     missedUI.textContent = "Missed!";
@@ -737,9 +761,41 @@ function showMissedUI() {
         missedUI.textContent = "";
     }, 2000); // Adjust the delay as needed
 }
+// Function to show scored UI
+function showScoredUI() {
+    scoredUI.textContent = "Scored!";
+    // Add any additional styling or effects as needed
+    // Clear the missed UI after a delay
+    setTimeout(()=>{
+        scoredUI.textContent = "";
+    }, 2000); // Adjust the delay as needed
+}
 // Update the score UI function
 function updateScoreUI() {
     scoreUI.textContent = `Score: ${score}`;
+}
+//======ADD LIVES ======
+// Add lives UI
+const livesContainer = document.createElement("div");
+livesContainer.style.position = "absolute";
+livesContainer.style.top = "10px";
+livesContainer.style.right = "10px";
+livesContainer.style.display = "flex";
+const maxLives = 3;
+let currentLives = maxLives;
+for(let i = 0; i < maxLives; i++){
+    const heart = document.createElement("span");
+    heart.className = "heart-icon"; // You may need to define a CSS class for the heart icon
+    heart.innerHTML = "❤️"; // You can use a heart emoji or any other icon
+    livesContainer.appendChild(heart);
+}
+document.body.appendChild(livesContainer);
+// Function to update the lives UI
+function updateLivesUI() {
+    // Remove a heart (life) from the UI
+    const hearts = livesContainer.querySelectorAll(".heart-icon");
+    if (currentLives > 0) //@ts-ignore
+    hearts[maxLives - currentLives].style.display = "none";
 }
 // Modify the collision detection logic
 // function checkCollision() {
@@ -874,7 +930,7 @@ function shootBall(direction, speed) {
             if (progress < 1) requestAnimationFrame(updateAnimation);
             else {
                 // Reset the ball position after a delay (3-4 seconds)
-                showMissedUI();
+                handleMiss();
                 setTimeout(()=>{
                     moveBallToInitialPosition();
                 }, 600);
@@ -900,6 +956,26 @@ function moveBallToInitialPosition() {
 }
 // Set up the initial score UI
 updateScoreUI();
+// Function to handle misses
+function handleMiss() {
+    // Decrement the number of lives
+    currentLives--;
+    console.log(currentLives);
+    // Update the lives UI
+    updateLivesUI();
+    // Show missed UI
+    showMissedUI();
+    if (currentLives <= 0) // Game over logic, e.g., show a game over message, reset the score, etc.
+    // For now, let's reset the lives after a delay
+    setTimeout(()=>{
+        currentLives = maxLives;
+        updateLivesUI();
+    }, 2000);
+    else // Reset the ball position after a delay
+    setTimeout(()=>{
+        moveBallToInitialPosition();
+    }, 600);
+}
 function render() {
     camera.updateFrame(renderer);
     ballShooted = false;
@@ -912,21 +988,39 @@ function render() {
             // Player catches the ball
             ballCollisionDetected = true;
             ballShooted = true;
-            showMissedUI();
-            moveBallToInitialPosition(); // Reset the ball position after a delay
-        } else if (goalDistance < 3.5) {
+            handleMiss();
+        } else if (goalDistance < 5.5) {
             // Goal scored, update the score
             ballCollisionDetected = true;
             ballShooted = true;
             score++;
+            showScoredUI();
             updateScoreUI();
             moveBallToInitialPosition(); // Reset the ball position after a delay
         }
     }
     renderer.render(scene, camera);
 }
+// Show the instructions modal when the page loads
+window.addEventListener("load", ()=>{
+    //@ts-ignore
+    const instructionsModal = new bootstrap.Modal(document.getElementById("instructionsModal"));
+    instructionsModal.show();
+});
+// Add an event listener to the "Start Game" button in the instructions modal
+const startGameButton = document.getElementById("startGameButton");
+//@ts-ignore
+startGameButton.addEventListener("click", ()=>{
+    //@ts-ignore
+    const instructionsModal = new bootstrap.Modal(document.getElementById("instructionsModal"));
+    instructionsModal.hide();
+    // Trigger the placement UI click event programmatically
+    const placementUI = document.getElementById("zappar-placement-ui");
+    //@ts-ignore
+    placementUI.click();
+});
 
-},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","62b2ad1e39b9a5b9":"bc1aq","7a2f5b54650a2bfc":"dzWQF","ee062f22be023520":"jNSdD","hammerjs":"lHwvQ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","63c3f3cf533e999a":"g4D1J"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","hammerjs":"lHwvQ","16471dbe4b7438ad":"bc1aq","5cfd7f4445224980":"dzWQF","93c5239defc99dd0":"jNSdD","79f43e7d436e0f3b":"g4D1J","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -32102,7 +32196,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("282c97e0f424fa52"));
+                let url = new URL(require("a14074e24957f0de"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), false, false, false, false);
             }),
@@ -32112,7 +32206,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_face on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("282c97e0f424fa52"));
+                let url = new URL(require("a14074e24957f0de"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, false);
             }),
@@ -32122,7 +32216,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_full_head_simplified on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("4ecc067736e3d1e6"));
+                let url = new URL(require("3d28a4b1653f8e20"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, fillNeck);
             }),
@@ -32217,14 +32311,14 @@ function initialize(opts) {
 }
 function loadDefaultFaceModel(o) {
     return __awaiter(this, void 0, void 0, function*() {
-        let url = new URL(require("650cb28df34da155"));
+        let url = new URL(require("d9cb5cfd7f577c68"));
         let data = yield fetch(url.toString());
         let ab = yield data.arrayBuffer();
         client === null || client === void 0 || client.face_tracker_model_load_from_memory(o, ab);
     });
 }
 
-},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","282c97e0f424fa52":"htM1Y","4ecc067736e3d1e6":"e04H3","650cb28df34da155":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
+},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","a14074e24957f0de":"htM1Y","3d28a4b1653f8e20":"e04H3","d9cb5cfd7f577c68":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "barcode_format_t", ()=>(0, _zapparNative.barcode_format_t));
@@ -39765,10 +39859,10 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments
 let messageManager = new (0, _messages.MsgManager)();
 function launchWorker(worker) {
     return __awaiter(this, void 0, void 0, function*() {
-        if (!worker) worker = new Worker(require("8f1b18b151658b96"));
+        if (!worker) worker = new Worker(require("54517480ba6dadbf"));
         worker.postMessage({
             t: "wasm",
-            url: new URL(require("32ac950aeb9f67f8")).toString()
+            url: new URL(require("572d36e54ba46115")).toString()
         });
         yield waitForLoad(worker);
         function sendOutgoing() {
@@ -39794,7 +39888,7 @@ function waitForLoad(w) {
     });
 }
 
-},{"./messages":"hdBLR","8f1b18b151658b96":"35JNJ","32ac950aeb9f67f8":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
+},{"./messages":"hdBLR","54517480ba6dadbf":"35JNJ","572d36e54ba46115":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MsgManager", ()=>MsgManager);
@@ -54654,16 +54748,7 @@ function buildNodeHierarchy(nodeId, parentObject, json, parser) {
     return newGeometry;
 }
 
-},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"irmnC":[function() {},{}],"bc1aq":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football.1916492a.png" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"dzWQF":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football_net.1cbbfa85.glb" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"jNSdD":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football_field.0b6176e5.glb" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"lHwvQ":[function(require,module,exports) {
+},{"three":"ktPTu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"irmnC":[function() {},{}],"lHwvQ":[function(require,module,exports) {
 /*! Hammer.JS - v2.0.7 - 2016-04-22
  * http://hammerjs.github.io/
  *
@@ -56660,7 +56745,16 @@ module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "footba
     else window1[exportName] = Hammer;
 })(window, document, "Hammer");
 
-},{}],"g4D1J":[function(require,module,exports) {
+},{}],"bc1aq":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football.1916492a.png" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"dzWQF":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football_net.1cbbfa85.glb" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"jNSdD":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "football_field.0b6176e5.glb" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"g4D1J":[function(require,module,exports) {
 module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "keep2.6617ec20.png" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"lgJ39"}]},["4cEIE","h7u1C"], "h7u1C", "parcelRequire5ba9")

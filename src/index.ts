@@ -28,6 +28,7 @@ window.addEventListener("resize", () => {
 renderer.setAnimationLoop(render);
 
 const camera = new ZapparThree.Camera();
+
 const manager = new ZapparThree.LoadingManager();
 
 ZapparThree.glContextSet(renderer.getContext());
@@ -154,16 +155,21 @@ gltfLoader.load(
   (gltf) => {
     goalPostModel = gltf.scene;
     gltf.scene.scale.set(3, 3, 3);
-    gltf.scene.position.set(0, 3.5, -25);
+    gltf.scene.position.set(0, 3.51, -25);
     gltf.scene.rotation.set(0, -Math.PI / 2, 0);
 
     gltf.scene.traverse(function (child) {
-      if ((child as THREE.Mesh).isMesh) {
-        let m = child as THREE.Mesh;
-        child.castShadow = true;
-        child.receiveShadow = true;
-        m.castShadow = true;
-        m.frustumCulled = false;
+      if (child instanceof THREE.Mesh) {
+        // Adjust shininess and specular properties
+        child.material.shininess = 1; // Experiment with different values
+        child.material.specular = new THREE.Color(0xff0000); // Set the specular color to black
+        child.material.depthBias = 0.02;
+
+        // Enable flat shading for a less shiny appearance
+        child.material.flatShading = true;
+
+        // Optionally, adjust other material properties such as emissive color
+        child.material.emissive = new THREE.Color(0xfff);
       }
     });
     gltf.scene.add(shootingPoint);
@@ -263,15 +269,39 @@ placementUI.addEventListener("click", () => {
 
 //=========SCORE LOGIC =========
 
+const blackBackground = document.createElement("div");
+blackBackground.style.position = "absolute";
+blackBackground.style.bottom = "10px";
+blackBackground.style.left = "50%";
+blackBackground.style.transform = "translateX(-50%)";
+blackBackground.style.width = "200px";
+blackBackground.style.padding = "10px";
+blackBackground.style.backgroundColor = "rgba(0, 0, 0, 0.7)"; // Black with 70% transparency
+
+// Append the black background to the document body
+document.body.appendChild(blackBackground);
+
 let score = 0;
 const scoreUI = document.createElement("div");
 scoreUI.id = "score-ui";
+scoreUI.style.position = "absolute";
+scoreUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+scoreUI.style.color = "#fff";
 document.body.appendChild(scoreUI);
 
-// Add this variable at the beginning of your code
 const missedUI = document.createElement("div");
 missedUI.id = "missed-ui";
+missedUI.style.position = "absolute";
+missedUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+missedUI.style.color = "#ff0000";
 document.body.appendChild(missedUI);
+
+const scoredUI = document.createElement("div");
+scoredUI.id = "scored-ui";
+scoredUI.style.position = "absolute";
+scoredUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+scoredUI.style.color = "#ff0000";
+document.body.appendChild(scoredUI);
 
 // Function to show missed UI
 function showMissedUI() {
@@ -284,9 +314,51 @@ function showMissedUI() {
   }, 2000); // Adjust the delay as needed
 }
 
+// Function to show scored UI
+function showScoredUI() {
+  scoredUI.textContent = "Scored!";
+  // Add any additional styling or effects as needed
+
+  // Clear the missed UI after a delay
+  setTimeout(() => {
+    scoredUI.textContent = "";
+  }, 2000); // Adjust the delay as needed
+}
+
 // Update the score UI function
 function updateScoreUI() {
   scoreUI.textContent = `Score: ${score}`;
+}
+
+//======ADD LIVES ======
+
+// Add lives UI
+const livesContainer = document.createElement("div");
+livesContainer.style.position = "absolute";
+livesContainer.style.top = "10px";
+livesContainer.style.right = "10px";
+livesContainer.style.display = "flex";
+
+const maxLives = 3;
+let currentLives = maxLives;
+
+for (let i = 0; i < maxLives; i++) {
+  const heart = document.createElement("span");
+  heart.className = "heart-icon"; // You may need to define a CSS class for the heart icon
+  heart.innerHTML = "❤️"; // You can use a heart emoji or any other icon
+  livesContainer.appendChild(heart);
+}
+
+document.body.appendChild(livesContainer);
+
+// Function to update the lives UI
+function updateLivesUI() {
+  // Remove a heart (life) from the UI
+  const hearts = livesContainer.querySelectorAll(".heart-icon");
+  if (currentLives > 0) {
+    //@ts-ignore
+    hearts[maxLives - currentLives].style.display = "none";
+  }
 }
 
 // Modify the collision detection logic
@@ -457,7 +529,7 @@ function shootBall(direction: THREE.Vector2, speed: number) {
         requestAnimationFrame(updateAnimation);
       } else {
         // Reset the ball position after a delay (3-4 seconds)
-        showMissedUI();
+        handleMiss();
         setTimeout(() => {
           moveBallToInitialPosition();
         }, 600);
@@ -496,6 +568,32 @@ function moveBallToInitialPosition() {
 // Set up the initial score UI
 updateScoreUI();
 
+// Function to handle misses
+function handleMiss() {
+  // Decrement the number of lives
+  currentLives--;
+  console.log(currentLives);
+  // Update the lives UI
+  updateLivesUI();
+
+  // Show missed UI
+  showMissedUI();
+
+  if (currentLives <= 0) {
+    // Game over logic, e.g., show a game over message, reset the score, etc.
+    // For now, let's reset the lives after a delay
+    setTimeout(() => {
+      currentLives = maxLives;
+      updateLivesUI();
+    }, 2000);
+  } else {
+    // Reset the ball position after a delay
+    setTimeout(() => {
+      moveBallToInitialPosition();
+    }, 600);
+  }
+}
+
 function render() {
   camera.updateFrame(renderer);
   ballShooted = false;
@@ -510,13 +608,13 @@ function render() {
       // Player catches the ball
       ballCollisionDetected = true;
       ballShooted = true;
-      showMissedUI();
-      moveBallToInitialPosition(); // Reset the ball position after a delay
-    } else if (goalDistance < 3.5) {
+      handleMiss();
+    } else if (goalDistance < 5.5) {
       // Goal scored, update the score
       ballCollisionDetected = true;
       ballShooted = true;
       score++;
+      showScoredUI();
       updateScoreUI();
       moveBallToInitialPosition(); // Reset the ball position after a delay
     }
@@ -524,3 +622,28 @@ function render() {
 
   renderer.render(scene, camera);
 }
+
+// Show the instructions modal when the page loads
+window.addEventListener("load", () => {
+  //@ts-ignore
+  const instructionsModal = new bootstrap.Modal(
+    document.getElementById("instructionsModal")
+  );
+  instructionsModal.show();
+});
+
+// Add an event listener to the "Start Game" button in the instructions modal
+const startGameButton = document.getElementById("startGameButton");
+//@ts-ignore
+startGameButton.addEventListener("click", () => {
+  //@ts-ignore
+  const instructionsModal = new bootstrap.Modal(
+    document.getElementById("instructionsModal")
+  );
+  instructionsModal.hide();
+
+  // Trigger the placement UI click event programmatically
+  const placementUI = document.getElementById("zappar-placement-ui");
+  //@ts-ignore
+  placementUI.click();
+});

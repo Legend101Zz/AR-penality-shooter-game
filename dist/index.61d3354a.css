@@ -13,7 +13,7 @@ html, body {
   left: 10px;
 }
 
-#missed-ui {
+#missed-ui, #scored-ui {
   color: red;
   font-size: 36px;
   position: absolute;
