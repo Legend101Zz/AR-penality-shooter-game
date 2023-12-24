@@ -332,6 +332,26 @@ function updateScoreUI() {
 
 //======ADD LIVES ======
 
+function showCartoonCharacter() {
+  const cartoonCharacter = document.getElementById("cartoonCharacter");
+  cartoonCharacter.style.display = "block";
+}
+
+function hideCartoonCharacter() {
+  const cartoonCharacter = document.getElementById("cartoonCharacter");
+  cartoonCharacter.style.display = "none";
+}
+
+function showConfetti() {
+  const confetti = document.getElementById("confetti");
+  confetti.style.display = "block";
+}
+
+function hideConfetti() {
+  const confetti = document.getElementById("confetti");
+  confetti.style.display = "none";
+}
+
 // Add lives UI
 const livesContainer = document.createElement("div");
 livesContainer.style.position = "absolute";
@@ -530,9 +550,10 @@ function shootBall(direction: THREE.Vector2, speed: number) {
       } else {
         // Reset the ball position after a delay (3-4 seconds)
         handleMiss();
+        ball.visible = false;
         setTimeout(() => {
           moveBallToInitialPosition();
-        }, 600);
+        }, 300);
       }
     }
   }
@@ -541,9 +562,10 @@ function shootBall(direction: THREE.Vector2, speed: number) {
 }
 
 function moveBallToInitialPosition() {
+  ball.visible = true;
   const initialBallPosition = new THREE.Vector3(0, 1, -5);
 
-  const animationDuration = 1000;
+  const animationDuration = 500;
   const startTime = Date.now();
 
   function updateAnimation() {
@@ -568,6 +590,30 @@ function moveBallToInitialPosition() {
 // Set up the initial score UI
 updateScoreUI();
 
+function displayGameOverModal(finalScore: number) {
+  // renderer.domElement.remove();
+  //@ts-ignore
+  const gameOverModal = new bootstrap.Modal(
+    document.getElementById("gameOverModal"),
+    {
+      backdrop: false, // Prevent clicking outside the modal to close it
+      keyboard: false, // Prevent using the keyboard to close it
+    }
+  );
+  const gameOverScore = document.getElementById("gameOverScore");
+  if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
+  gameOverModal.show();
+  //@ts-ignore
+  document.querySelector("#playEnded").addEventListener("click", (e) => {
+    //hide the start modal
+    gameOverModal.hide();
+    // show the hiddenStart elements
+
+    // Reload the window
+    window.location.reload();
+  });
+}
+
 // Function to handle misses
 function handleMiss() {
   // Decrement the number of lives
@@ -582,6 +628,7 @@ function handleMiss() {
   if (currentLives <= 0) {
     // Game over logic, e.g., show a game over message, reset the score, etc.
     // For now, let's reset the lives after a delay
+    displayGameOverModal(score);
     setTimeout(() => {
       currentLives = maxLives;
       updateLivesUI();
@@ -590,10 +637,28 @@ function handleMiss() {
     // Reset the ball position after a delay
     setTimeout(() => {
       moveBallToInitialPosition();
-    }, 600);
+    }, 300);
   }
 }
 
+function handleScore() {
+  // Increment the score
+  score++;
+  updateScoreUI();
+  showScoredUI();
+  // Show cartoon character and confetti
+  showCartoonCharacter();
+  showConfetti();
+
+  // Additional logic or animations if needed
+
+  // Reset the ball position after a delay
+  setTimeout(() => {
+    moveBallToInitialPosition();
+    hideCartoonCharacter();
+    hideConfetti();
+  }, 2000);
+}
 function render() {
   camera.updateFrame(renderer);
   ballShooted = false;
@@ -610,13 +675,9 @@ function render() {
       ballShooted = true;
       handleMiss();
     } else if (goalDistance < 5.5) {
-      // Goal scored, update the score
       ballCollisionDetected = true;
       ballShooted = true;
-      score++;
-      showScoredUI();
-      updateScoreUI();
-      moveBallToInitialPosition(); // Reset the ball position after a delay
+      handleScore();
     }
   }
 

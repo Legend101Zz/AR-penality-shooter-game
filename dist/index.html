@@ -5,40 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Football Goalkeeper Game</title>
     <style>body {
-  background-color: #f4f4f4;
-  margin: 0;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
+  color: #f2894b;
+  background-color: #3f3f41;
 }
 
-#zappar-placement-ui {
-  text-align: center;
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 10px #0000004d;
-}
-
-#instructionsModal {
-  background-color: #fff;
+.modal-content {
+  color: #f2894b;
+  background-color: #3f3f41;
   border-radius: 10px;
   box-shadow: 0 0 20px #00000080;
 }
 
+.modal-header {
+  color: #fff;
+  background-color: #f2894b;
+  border-radius: 10px 10px 0 0;
+}
+
 .modal-title {
-  color: #333;
   font-size: 24px;
   font-weight: bold;
 }
 
 .modal-body {
-  color: #555;
-  margin-top: -40px;
-  font-size: 10px;
+  font-size: 14px;
 }
 
 ul {
@@ -52,12 +42,23 @@ ul li {
 
 .modal-footer {
   text-align: center;
+  background-color: #f2894b;
+  border-radius: 0 0 10px 10px;
+}
+
+#startGameModal .modal-dialog {
+  width: 100%;
+  margin-top: 50vh;
+}
+
+#gameOverModal .modal-dialog {
+  width: 100%;
 }
 
 #startGameButton {
   color: #fff;
   cursor: pointer;
-  background-color: #007bff;
+  background-color: #dc3545;
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
@@ -67,25 +68,25 @@ ul li {
 }
 
 #startGameButton:hover {
-  background-color: #0056b3;
+  background-color: #c82333;
 }
 
-#arrow-ui {
-  z-index: 1;
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-20px);
+  }
+
+  60% {
+    transform: translateY(-10px);
+  }
 }
 
-@media screen and (max-width: 600px) {
-  #zappar-placement-ui, #instructionsModal {
-    width: 90%;
-  }
-
-  #startGameButton {
-    font-size: 16px;
-  }
+.modal-content {
+  animation: bounce 1.5s infinite;
 }
 
 </style>
@@ -93,32 +94,34 @@ ul li {
   <body>
     <script src="/index.b71e74eb.js" defer=""></script>
     <div id="arrow-ui"></div>
+    <div id="cartoonCharacter" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)">
+      <img src="/win2.540a37b7.png" alt="Cartoon Character" style="width: 200px; height: auto">
+    </div>
+    
+    <div id="confetti" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)">
+      <img src="/win.c8ea3fa8.png" alt="Confetti" style="width: 200px; height: auto">
+    </div>
     <div id="zappar-placement-ui">
       Position the Field and let the game Begin
 
-      <div id="instructionsModal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+      <div id="startGameModal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Instructions</h5>
+              <h5 class="modal-title">Football Goalkeeper Game</h5>
             </div>
-            <br>
             <div class="modal-body">
               <p>
-                </p><p>
-                 <b> Welcome to the Football Goalkeeper Game! Before you start 
-                  playing, please read the instructions below:
-                </b>
-                </p>
-                
-              <p></p>
-              <br>
+                Welcome to the Football Goalkeeper Game! Before you start
+                playing, please read the instructions below:
+              </p>
               <ul>
-                
                 <li>Wait for the game to start after positioning the field.</li>
                 <li>Swipe on the screen to shoot the ball.</li>
-                <li>use the red dot to as direction arrow for shooting.</li>
-                <li>Adjust the speed of shoot using the controller given.</li>
+                <li>Use the red dot as a directional arrow for shooting.</li>
+                <li>
+                  Adjust the speed of the shot using the given controller.
+                </li>
                 <li>
                   Your goal is to score points by shooting the ball into the
                   goal.
@@ -135,7 +138,27 @@ ul li {
             </div>
           </div>
         </div>
+ 
+
+      <!-- Game Over Modal -->
+      <div id="gameOverModal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" style="display: none">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Game Over</h5>
+            </div>
+            <div class="modal-body">
+              <h3 class="text-center">Game Over!</h3>
+              <p class="text-center" id="gameOverScore"></p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="playEnded" class="btn btn-primary" data-bs-dismiss="modal">
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </body>
+  </div></body>
 </html>

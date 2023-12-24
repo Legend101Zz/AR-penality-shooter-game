@@ -6,15 +6,6 @@ body {
   height: 100%;
 }
 
-/* #arrow-ui {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  width: 100px;
-  height: 100px;
-  border: 2px solid white; /* Add a border for better visibility */
-/* } */
-
 #score-ui {
   position: absolute;
   top: 10px;
@@ -43,7 +34,7 @@ body {
 
 #zappar-placement-ui {
   position: absolute;
-  bottom: 200px;
+  bottom: 50px;
   width: 200px;
   left: calc(50% - 100px);
 
@@ -53,4 +44,37 @@ body {
   font-family: sans-serif;
   padding: 10px;
   border-radius: 5px;
+}
+
+#cartoonCharacter {
+  animation: bounce 1s infinite;
+}
+
+#confetti {
+  animation: fall 3s infinite;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+  }
 }

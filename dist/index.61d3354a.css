@@ -31,8 +31,40 @@ html, body {
   padding: 10px;
   font-family: sans-serif;
   position: absolute;
-  bottom: 200px;
+  bottom: 50px;
   left: calc(50% - 100px);
+}
+
+#cartoonCharacter {
+  animation: bounce 1s infinite;
+}
+
+#confetti {
+  animation: fall 3s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-20px);
+  }
+
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-100vh)rotate(0deg);
+  }
+
+  100% {
+    transform: translateY(100vh)rotate(360deg);
+  }
 }
 
 /*# sourceMappingURL=index.61d3354a.css.map */
