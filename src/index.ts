@@ -6,6 +6,7 @@ import "./index.css";
 // Import Hammer.js
 import Hammer from "hammerjs";
 
+//=========VARIABLES=========
 const footImg = new URL("../assets/football.png", import.meta.url).href;
 const model = new URL("../assets/football_net.glb", import.meta.url).href;
 const fieldModel = new URL("../assets/football_field.glb", import.meta.url)
@@ -18,6 +19,7 @@ let hasPlaced = false;
 let ballShooted = false;
 let ballCollisionDetected = false;
 
+//=========ZAPPAR + THREEJS START CODE=========
 const renderer = new THREE.WebGLRenderer();
 document.body.appendChild(renderer.domElement);
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -26,9 +28,7 @@ window.addEventListener("resize", () => {
 });
 
 renderer.setAnimationLoop(render);
-
 const camera = new ZapparThree.Camera();
-
 const manager = new ZapparThree.LoadingManager();
 
 ZapparThree.glContextSet(renderer.getContext());
@@ -45,6 +45,7 @@ const tracker = new ZapparThree.InstantWorldTracker();
 const trackerGroup = new ZapparThree.InstantWorldAnchorGroup(camera, tracker);
 scene.add(trackerGroup);
 
+//=========FOOTBALL CODE=========
 const ballTexture = new THREE.TextureLoader().load(footImg);
 const ball = new THREE.Mesh(
   new THREE.SphereBufferGeometry(0.6, 32, 32),
@@ -56,13 +57,8 @@ ball.visible = false;
 
 //===POINT===
 
-// Create a point geometry
 const pointGeometry = new THREE.SphereBufferGeometry(0.2, 8, 8);
-
-// Create a point material
 const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-
-// Create the point mesh
 const shootingPoint = new THREE.Mesh(pointGeometry, pointMaterial);
 // shootingPoint.position.set(-6, -6, 0);
 shootingPoint.visible = false; // Initially invisible
@@ -113,81 +109,14 @@ function animateShootingPoint() {
 //===GOALKEEPER===
 
 const goalkeeperTexture = new THREE.TextureLoader().load(player);
-
 const goalkeeperGeometry = new THREE.PlaneBufferGeometry(4, 4);
 const goalkeeperMaterial = new THREE.MeshBasicMaterial({
   map: goalkeeperTexture,
   transparent: true,
 });
-
 const goalkeeper = new THREE.Mesh(goalkeeperGeometry, goalkeeperMaterial);
 goalkeeper.position.set(0, 2, -25);
 goalkeeper.visible = false;
-
-const gltfLoader = new GLTFLoader(manager);
-
-gltfLoader.load(
-  fieldModel,
-  (gltf) => {
-    field = gltf.scene;
-    gltf.scene.scale.set(1, 1, 1);
-    gltf.scene.position.set(0, -2, -5);
-    camera.lookAt(gltf.scene.position);
-
-    gltf.scene.traverse(function (child) {
-      if ((child as THREE.Mesh).isMesh) {
-        let m = child as THREE.Mesh;
-        child.castShadow = true;
-        child.receiveShadow = true;
-        m.castShadow = true;
-        m.frustumCulled = false;
-      }
-    });
-
-    trackerGroup.add(field);
-  },
-  undefined,
-  (error) => console.error(error)
-);
-
-gltfLoader.load(
-  model,
-  (gltf) => {
-    goalPostModel = gltf.scene;
-    gltf.scene.scale.set(3, 3, 3);
-    gltf.scene.position.set(0, 3.51, -25);
-    gltf.scene.rotation.set(0, -Math.PI / 2, 0);
-
-    gltf.scene.traverse(function (child) {
-      if (child instanceof THREE.Mesh) {
-        // Adjust shininess and specular properties
-        child.material.shininess = 1; // Experiment with different values
-        child.material.specular = new THREE.Color(0xff0000); // Set the specular color to black
-        child.material.depthBias = 0.02;
-
-        // Enable flat shading for a less shiny appearance
-        child.material.flatShading = true;
-
-        // Optionally, adjust other material properties such as emissive color
-        child.material.emissive = new THREE.Color(0xfff);
-      }
-    });
-    gltf.scene.add(shootingPoint);
-    goalkeeper.visible = true;
-    ball.visible = true;
-    trackerGroup.add(goalPostModel, goalkeeper, ball);
-  },
-  undefined,
-  (error) => console.error(error)
-);
-
-const ambientLight2 = new THREE.AmbientLight(0x404040);
-ambientLight2.position.set(0, 5, 0);
-scene.add(ambientLight2);
-
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(0, 5, 0);
-scene.add(directionalLight);
 
 function animateBallAndGoalkeeper() {
   function updateAnimation() {
@@ -224,10 +153,75 @@ function animateBallAndGoalkeeper() {
   updateAnimation();
 }
 
+//=========FIELD-MODEL=========
+const gltfLoader = new GLTFLoader(manager);
+
+gltfLoader.load(
+  fieldModel,
+  (gltf) => {
+    field = gltf.scene;
+    gltf.scene.scale.set(1, 1, 1);
+    gltf.scene.position.set(0, -2, -5);
+    camera.lookAt(gltf.scene.position);
+
+    gltf.scene.traverse(function (child) {
+      if ((child as THREE.Mesh).isMesh) {
+        let m = child as THREE.Mesh;
+        child.castShadow = true;
+        child.receiveShadow = true;
+        m.castShadow = true;
+        m.frustumCulled = false;
+      }
+    });
+
+    trackerGroup.add(field);
+  },
+  undefined,
+  (error) => console.error(error)
+);
+
 function getRandomValue(min: number, max: number): number {
   return min + Math.random() * (max - min);
 }
 
+//=========FOOTBALL GOAL-POST MODEL=========
+gltfLoader.load(
+  model,
+  (gltf) => {
+    goalPostModel = gltf.scene;
+    gltf.scene.scale.set(3, 3, 3);
+    gltf.scene.position.set(0, 3.51, -25);
+    gltf.scene.rotation.set(0, -Math.PI / 2, 0);
+
+    gltf.scene.traverse(function (child) {
+      if (child instanceof THREE.Mesh) {
+        //To Adjust shininess and specular properties
+        child.material.shininess = 1;
+        child.material.specular = new THREE.Color(0xff0000);
+        child.material.depthBias = 0.02;
+        child.material.flatShading = true;
+        child.material.emissive = new THREE.Color(0xfff);
+      }
+    });
+    gltf.scene.add(shootingPoint);
+    goalkeeper.visible = true;
+    ball.visible = true;
+    trackerGroup.add(goalPostModel, goalkeeper, ball);
+  },
+  undefined,
+  (error) => console.error(error)
+);
+
+//=========LIGHTING=========
+const ambientLight2 = new THREE.AmbientLight(0x404040);
+ambientLight2.position.set(0, 5, 0);
+scene.add(ambientLight2);
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(0, 5, 0);
+scene.add(directionalLight);
+
+//=========GAME START LOGIC =========
 const placementUI =
   document.getElementById("zappar-placement-ui") ||
   document.createElement("div");
@@ -263,10 +257,6 @@ placementUI.addEventListener("click", () => {
   animateBallAndGoalkeeper();
 });
 
-// let arrowUI: HTMLElement;
-
-// arrowUI = document.getElementById("arrow-ui") || document.createElement("div");
-
 //=========SCORE LOGIC =========
 
 const blackBackground = document.createElement("div");
@@ -276,11 +266,10 @@ blackBackground.style.left = "50%";
 blackBackground.style.transform = "translateX(-50%)";
 blackBackground.style.width = "200px";
 blackBackground.style.padding = "10px";
-blackBackground.style.backgroundColor = "rgba(0, 0, 0, 0.7)"; // Black with 70% transparency
-
-// Append the black background to the document body
+blackBackground.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
 document.body.appendChild(blackBackground);
 
+//=========SCORE-UI=========
 let score = 0;
 const scoreUI = document.createElement("div");
 scoreUI.id = "score-ui";
@@ -289,6 +278,15 @@ scoreUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
 scoreUI.style.color = "#fff";
 document.body.appendChild(scoreUI);
 
+// Function to show scored UI
+function showScoredUI() {
+  scoreUI.textContent = "Scored!";
+  setTimeout(() => {
+    scoreUI.textContent = "";
+  }, 2000);
+}
+
+//=========MISS-UI=========
 const missedUI = document.createElement("div");
 missedUI.id = "missed-ui";
 missedUI.style.position = "absolute";
@@ -296,61 +294,23 @@ missedUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
 missedUI.style.color = "#ff0000";
 document.body.appendChild(missedUI);
 
-const scoredUI = document.createElement("div");
-scoredUI.id = "scored-ui";
-scoredUI.style.position = "absolute";
-scoredUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
-scoredUI.style.color = "#ff0000";
-document.body.appendChild(scoredUI);
-
 // Function to show missed UI
 function showMissedUI() {
   missedUI.textContent = "Missed!";
-  // Add any additional styling or effects as needed
-
-  // Clear the missed UI after a delay
   setTimeout(() => {
     missedUI.textContent = "";
-  }, 2000); // Adjust the delay as needed
+  }, 2000);
 }
 
-// Function to show scored UI
-function showScoredUI() {
-  scoredUI.textContent = "Scored!";
-  // Add any additional styling or effects as needed
-
-  // Clear the missed UI after a delay
-  setTimeout(() => {
-    scoredUI.textContent = "";
-  }, 2000); // Adjust the delay as needed
-}
+//======LIVES LOGIC======
 
 // Update the score UI function
 function updateScoreUI() {
   scoreUI.textContent = `Score: ${score}`;
 }
 
-//======ADD LIVES ======
-
-function showCartoonCharacter() {
-  const cartoonCharacter = document.getElementById("cartoonCharacter");
-  cartoonCharacter.style.display = "block";
-}
-
-function hideCartoonCharacter() {
-  const cartoonCharacter = document.getElementById("cartoonCharacter");
-  cartoonCharacter.style.display = "none";
-}
-
-function showConfetti() {
-  const confetti = document.getElementById("confetti");
-  confetti.style.display = "block";
-}
-
-function hideConfetti() {
-  const confetti = document.getElementById("confetti");
-  confetti.style.display = "none";
-}
+// Set up the initial score UI
+updateScoreUI();
 
 // Add lives UI
 const livesContainer = document.createElement("div");
@@ -359,13 +319,13 @@ livesContainer.style.top = "10px";
 livesContainer.style.right = "10px";
 livesContainer.style.display = "flex";
 
-const maxLives = 3;
+const maxLives = 1;
 let currentLives = maxLives;
 
 for (let i = 0; i < maxLives; i++) {
   const heart = document.createElement("span");
-  heart.className = "heart-icon"; // You may need to define a CSS class for the heart icon
-  heart.innerHTML = "❤️"; // You can use a heart emoji or any other icon
+  heart.className = "heart-icon";
+  heart.innerHTML = "❤️";
   livesContainer.appendChild(heart);
 }
 
@@ -381,121 +341,43 @@ function updateLivesUI() {
   }
 }
 
-// Modify the collision detection logic
-// function checkCollision() {
-//   // Check if the ball and goalkeeper have the same position
-//   const playerDistance = ball.position.distanceTo(goalkeeper.position);
-//   if (playerDistance < 1.5) {
-//     // Player catches the ball
-//     return "catch";
-//   }
+//======CHARACTER & CONFETTI LOGIC ======
+function showCartoonCharacter() {
+  const cartoonCharacter = document.getElementById("cartoonCharacter");
+  if (cartoonCharacter) cartoonCharacter.style.display = "block";
+}
 
-//   // Check if the ball and goalpost have the same position
-//   const goalDistance = ball.position.distanceTo(goalPostModel.position);
-//   if (goalDistance < 3) {
-//     // Goal scored
-//     return "goal";
-//   }
+function hideCartoonCharacter() {
+  const cartoonCharacter = document.getElementById("cartoonCharacter");
+  if (cartoonCharacter) cartoonCharacter.style.display = "none";
+}
 
-//   // No collision
-//   return "none";
-// }
+function showConfetti() {
+  const confetti = document.getElementById("confetti");
+  if (confetti) confetti.style.display = "block";
+}
 
-//=========ADDING ARROW =========
+function hideConfetti() {
+  const confetti = document.getElementById("confetti");
+  if (confetti) confetti.style.display = "none";
+}
 
-// Create an arrow geometry
-// const arrowGeometry = new THREE.ConeGeometry(0.2, 1, 8);
-
-// // Create an arrow material
-// const arrowMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-
-// // Create the arrow mesh
-// const arrow = new THREE.Mesh(arrowGeometry, arrowMaterial);
-
-// // Set initial position (same as ball's initial position)
-// arrow.position.set(0, 1, -5);
-// arrow.visible = false;
-// // Add the arrow to the scene
-// trackerGroup.add(arrow);
-
-// let swipeStartPos: THREE.Vector2 | null = null;
-// let swipeEndPos: THREE.Vector2 | null = null;
-
-// function handleTouchStart(event: TouchEvent) {
-//   swipeStartPos = new THREE.Vector2(
-//     event.touches[0].clientX,
-//     event.touches[0].clientY
-//   );
-// }
-
-// function handleTouchEnd(event: TouchEvent) {
-//   if (swipeStartPos) {
-//     swipeEndPos = new THREE.Vector2(
-//       event.changedTouches[0].clientX,
-//       event.changedTouches[0].clientY
-//     );
-
-//     const direction = new THREE.Vector2()
-//       .subVectors(swipeEndPos, swipeStartPos)
-//       .normalize();
-//     const speed = Math.min(swipeStartPos.distanceTo(swipeEndPos) * 0.01, 1.0);
-
-//     updateArrowUI(direction, speed);
-//     shootBall(direction, speed);
-
-//     swipeStartPos = null;
-//     swipeEndPos = null;
-//   }
-// }
-
-// function updateArrowUI(direction: THREE.Vector2, speed: number) {
-//   const arrowLength = Math.min(speed * 100, 100);
-//   const arrowRotation = Math.atan2(direction.y, direction.x);
-
-//   arrowUI.style.transform = `rotate(${arrowRotation}rad) scaleY(${
-//     arrowLength / 100
-//   })`;
-// }
-
-// function updateArrowUI(direction: THREE.Vector2, _speed: number) {
-//   // Convert ball position (Vector3) to a new Vector2
-//   const ballPosition2D = new THREE.Vector2(ball.position.x, ball.position.z);
-
-//   // Set arrow's position to the ball's position
-//   arrow.position.set(ballPosition2D.x, 0, ballPosition2D.y);
-
-//   // Calculate arrow rotation based on the ball's movement direction (for example, using goalkeeper's position)
-//   const direction2D = new THREE.Vector2()
-//     .subVectors(
-//       new THREE.Vector2(goalkeeper.position.x, goalkeeper.position.z),
-//       ballPosition2D
-//     )
-//     .normalize();
-
-//   const arrowRotation = Math.atan2(direction2D.y, direction2D.x);
-
-//   // Set arrow's rotation
-//   arrow.rotation.set(0, arrowRotation, 0);
-// }
-
-// function updateArrowUI(speed: number) {
-//   const arrowLength = Math.min(speed * 100, 100);
-//   const arrowRotation = Math.atan2(arrow.position.z, arrow.position.x);
-
-//   arrow.scale.set(1, 1, arrowLength / 100);
-//   arrow.rotation.set(0, arrowRotation, 0);
-// }
-
+//======SPEED BAR LOGIC======
 // Add this variable at the beginning of your code
 let speedControlBar: HTMLElement;
 
 // Function to create and initialize the speed control bar
 function createSpeedControlBar() {
   speedControlBar = document.createElement("input");
+  //@ts-ignore
   speedControlBar.type = "range";
+  //@ts-ignore
   speedControlBar.min = "0";
+  //@ts-ignore
   speedControlBar.max = "1";
+  //@ts-ignore
   speedControlBar.step = "0.01";
+  //@ts-ignore
   speedControlBar.value = "0.5"; // Set the initial speed
 
   speedControlBar.style.position = "absolute";
@@ -504,10 +386,8 @@ function createSpeedControlBar() {
   speedControlBar.style.transform = "translateX(-50%)";
   speedControlBar.style.width = "200px";
 
-  // Add an event listener to update the speed when the user adjusts the slider
   speedControlBar.addEventListener("input", (event) => {
     const speed = parseFloat((event.target as HTMLInputElement).value);
-    updateArrowUI(speed);
   });
 
   document.body.appendChild(speedControlBar);
@@ -548,7 +428,7 @@ function shootBall(direction: THREE.Vector2, speed: number) {
       if (progress < 1) {
         requestAnimationFrame(updateAnimation);
       } else {
-        // Reset the ball position after a delay (3-4 seconds)
+        // Reset the ball position after a delay (3-4 milli seconds)
         handleMiss();
         ball.visible = false;
         setTimeout(() => {
@@ -587,11 +467,8 @@ function moveBallToInitialPosition() {
   updateAnimation();
 }
 
-// Set up the initial score UI
-updateScoreUI();
+// ===AGG FUNCTION TO HANDLE MISS ======
 
-
-// Function to handle misses
 function handleMiss() {
   // Decrement the number of lives
   currentLives--;
@@ -606,10 +483,10 @@ function handleMiss() {
     // Game over logic, e.g., show a game over message, reset the score, etc.
     // For now, let's reset the lives after a delay
     displayGameOverModal(score);
-    setTimeout(() => {
-      currentLives = maxLives;
-      updateLivesUI();
-    }, 2000);
+    // setTimeout(() => {
+    //   currentLives = maxLives;
+    //   updateLivesUI();
+    // }, 2000);
   } else {
     // Reset the ball position after a delay
     setTimeout(() => {
@@ -618,6 +495,7 @@ function handleMiss() {
   }
 }
 
+// === AGG FUNCTION TO HANDLE SCORE ======
 function handleScore() {
   // Increment the score
   score++;
@@ -636,6 +514,8 @@ function handleScore() {
     hideConfetti();
   }, 2000);
 }
+
+// ===RENDER LOOP ======
 function render() {
   camera.updateFrame(renderer);
   ballShooted = false;
@@ -661,7 +541,8 @@ function render() {
   renderer.render(scene, camera);
 }
 
-// Show the instructions modal when the page loads
+// === Show the instructions modal when the page loads======
+
 window.addEventListener("load", () => {
   //@ts-ignore
   const instructionsModal = new bootstrap.Modal(
@@ -686,9 +567,8 @@ startGameButton.addEventListener("click", () => {
   placementUI.click();
 });
 
-
 function displayGameOverModal(finalScore: number) {
-  // renderer.domElement.remove();
+  renderer.domElement.remove();
   //@ts-ignore
   const gameOverModal = new bootstrap.Modal(
     document.getElementById("gameOverModal"),
@@ -697,11 +577,10 @@ function displayGameOverModal(finalScore: number) {
       keyboard: false, // Prevent using the keyboard to close it
     }
   );
-  const gameOverScore = document.getElementById("gameOverScore");
-  if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
+
   gameOverModal.show();
   //@ts-ignore
-  document.querySelector("#playEnded").addEventListener("click", (e) => {
+  gameOverModal.addEventListener("click", (e) => {
     //hide the start modal
     gameOverModal.hide();
     // show the hiddenStart elements
