@@ -40,7 +40,13 @@ html, body {
 }
 
 #confetti {
-  animation: fall 3s infinite;
+  width: 0;
+  height: 0;
+  border-bottom: 20px solid red;
+  border-left: 10px solid #0000;
+  border-right: 10px solid #0000;
+  animation: blast 3s ease-out infinite;
+  position: relative;
 }
 
 @keyframes bounce {
@@ -57,13 +63,15 @@ html, body {
   }
 }
 
-@keyframes fall {
+@keyframes blast {
   0% {
-    transform: translateY(-100vh)rotate(0deg);
+    opacity: 1;
+    transform: scale(1);
   }
 
   100% {
-    transform: translateY(100vh)rotate(360deg);
+    opacity: 0;
+    transform: scale(2);
   }
 }
 

@@ -974,25 +974,6 @@ function moveBallToInitialPosition() {
 }
 // Set up the initial score UI
 updateScoreUI();
-function displayGameOverModal(finalScore) {
-    // renderer.domElement.remove();
-    //@ts-ignore
-    const gameOverModal = new bootstrap.Modal(document.getElementById("gameOverModal"), {
-        backdrop: false,
-        keyboard: false
-    });
-    const gameOverScore = document.getElementById("gameOverScore");
-    if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
-    gameOverModal.show();
-    //@ts-ignore
-    document.querySelector("#playEnded").addEventListener("click", (e)=>{
-        //hide the start modal
-        gameOverModal.hide();
-        // show the hiddenStart elements
-        // Reload the window
-        window.location.reload();
-    });
-}
 // Function to handle misses
 function handleMiss() {
     // Decrement the number of lives
@@ -1070,6 +1051,25 @@ startGameButton.addEventListener("click", ()=>{
     //@ts-ignore
     placementUI.click();
 });
+function displayGameOverModal(finalScore) {
+    // renderer.domElement.remove();
+    //@ts-ignore
+    const gameOverModal = new bootstrap.Modal(document.getElementById("gameOverModal"), {
+        backdrop: false,
+        keyboard: false
+    });
+    const gameOverScore = document.getElementById("gameOverScore");
+    if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
+    gameOverModal.show();
+    //@ts-ignore
+    document.querySelector("#playEnded").addEventListener("click", (e)=>{
+        //hide the start modal
+        gameOverModal.hide();
+        // show the hiddenStart elements
+        // Reload the window
+        window.location.reload();
+    });
+}
 
 },{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","hammerjs":"lHwvQ","16471dbe4b7438ad":"bc1aq","5cfd7f4445224980":"dzWQF","93c5239defc99dd0":"jNSdD","79f43e7d436e0f3b":"g4D1J","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");

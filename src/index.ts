@@ -590,29 +590,6 @@ function moveBallToInitialPosition() {
 // Set up the initial score UI
 updateScoreUI();
 
-function displayGameOverModal(finalScore: number) {
-  // renderer.domElement.remove();
-  //@ts-ignore
-  const gameOverModal = new bootstrap.Modal(
-    document.getElementById("gameOverModal"),
-    {
-      backdrop: false, // Prevent clicking outside the modal to close it
-      keyboard: false, // Prevent using the keyboard to close it
-    }
-  );
-  const gameOverScore = document.getElementById("gameOverScore");
-  if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
-  gameOverModal.show();
-  //@ts-ignore
-  document.querySelector("#playEnded").addEventListener("click", (e) => {
-    //hide the start modal
-    gameOverModal.hide();
-    // show the hiddenStart elements
-
-    // Reload the window
-    window.location.reload();
-  });
-}
 
 // Function to handle misses
 function handleMiss() {
@@ -708,3 +685,28 @@ startGameButton.addEventListener("click", () => {
   //@ts-ignore
   placementUI.click();
 });
+
+
+function displayGameOverModal(finalScore: number) {
+  // renderer.domElement.remove();
+  //@ts-ignore
+  const gameOverModal = new bootstrap.Modal(
+    document.getElementById("gameOverModal"),
+    {
+      backdrop: false, // Prevent clicking outside the modal to close it
+      keyboard: false, // Prevent using the keyboard to close it
+    }
+  );
+  const gameOverScore = document.getElementById("gameOverScore");
+  if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
+  gameOverModal.show();
+  //@ts-ignore
+  document.querySelector("#playEnded").addEventListener("click", (e) => {
+    //hide the start modal
+    gameOverModal.hide();
+    // show the hiddenStart elements
+
+    // Reload the window
+    window.location.reload();
+  });
+}
