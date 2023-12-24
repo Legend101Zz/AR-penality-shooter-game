@@ -897,9 +897,7 @@ function handleMiss() {
     updateLivesUI();
     // Show missed UI
     showMissedUI();
-    if (currentLives <= 0) // Game over logic, e.g., show a game over message, reset the score, etc.
-    // For now, let's reset the lives after a delay
-    displayGameOverModal(score);
+    if (currentLives <= 0) displayGameOverModal(score);
     else // Reset the ball position after a delay
     setTimeout(()=>{
         moveBallToInitialPosition();
@@ -947,15 +945,20 @@ function render() {
 // === Show the instructions modal when the page loads======
 window.addEventListener("load", ()=>{
     //@ts-ignore
-    const instructionsModal = new bootstrap.Modal(document.getElementById("instructionsModal"));
+    const instructionsModal = new bootstrap.Modal(document.getElementById("startGameModal"));
     instructionsModal.show();
 });
 // Add an event listener to the "Start Game" button in the instructions modal
 const startGameButton = document.getElementById("startGameButton");
 //@ts-ignore
+const gameOverModal = new bootstrap.Modal(document.getElementById("gameOverModal"), {
+    backdrop: false,
+    keyboard: false
+});
+//@ts-ignore
 startGameButton.addEventListener("click", ()=>{
     //@ts-ignore
-    const instructionsModal = new bootstrap.Modal(document.getElementById("instructionsModal"));
+    const instructionsModal = new bootstrap.Modal(document.getElementById("startGameModal"));
     instructionsModal.hide();
     // Trigger the placement UI click event programmatically
     const placementUI = document.getElementById("zappar-placement-ui");
@@ -964,11 +967,11 @@ startGameButton.addEventListener("click", ()=>{
 });
 function displayGameOverModal(finalScore) {
     renderer.domElement.remove();
-    //@ts-ignore
-    const gameOverModal = new bootstrap.Modal(document.getElementById("gameOverModal"), {
-        backdrop: false,
-        keyboard: false
-    });
+    // Log an error if the modal element is not found
+    if (!gameOverModal) {
+        console.error("Game Over Modal element not found");
+        return;
+    }
     gameOverModal.show();
     //@ts-ignore
     gameOverModal.addEventListener("click", (e)=>{

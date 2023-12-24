@@ -480,13 +480,7 @@ function handleMiss() {
   showMissedUI();
 
   if (currentLives <= 0) {
-    // Game over logic, e.g., show a game over message, reset the score, etc.
-    // For now, let's reset the lives after a delay
     displayGameOverModal(score);
-    // setTimeout(() => {
-    //   currentLives = maxLives;
-    //   updateLivesUI();
-    // }, 2000);
   } else {
     // Reset the ball position after a delay
     setTimeout(() => {
@@ -546,7 +540,7 @@ function render() {
 window.addEventListener("load", () => {
   //@ts-ignore
   const instructionsModal = new bootstrap.Modal(
-    document.getElementById("instructionsModal")
+    document.getElementById("startGameModal")
   );
   instructionsModal.show();
 });
@@ -554,10 +548,18 @@ window.addEventListener("load", () => {
 // Add an event listener to the "Start Game" button in the instructions modal
 const startGameButton = document.getElementById("startGameButton");
 //@ts-ignore
+const gameOverModal = new bootstrap.Modal(
+  document.getElementById("gameOverModal"),
+  {
+    backdrop: false, // Prevent clicking outside the modal to close it
+    keyboard: false, // Prevent using the keyboard to close it
+  }
+);
+//@ts-ignore
 startGameButton.addEventListener("click", () => {
   //@ts-ignore
   const instructionsModal = new bootstrap.Modal(
-    document.getElementById("instructionsModal")
+    document.getElementById("startGameModal")
   );
   instructionsModal.hide();
 
@@ -569,14 +571,12 @@ startGameButton.addEventListener("click", () => {
 
 function displayGameOverModal(finalScore: number) {
   renderer.domElement.remove();
-  //@ts-ignore
-  const gameOverModal = new bootstrap.Modal(
-    document.getElementById("gameOverModal"),
-    {
-      backdrop: false, // Prevent clicking outside the modal to close it
-      keyboard: false, // Prevent using the keyboard to close it
-    }
-  );
+
+  // Log an error if the modal element is not found
+  if (!gameOverModal) {
+    console.error("Game Over Modal element not found");
+    return;
+  }
 
   gameOverModal.show();
   //@ts-ignore
