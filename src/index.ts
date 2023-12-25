@@ -520,12 +520,12 @@ function render() {
     const playerDistance = ball.position.distanceTo(goalkeeper.position);
     const goalDistance = ball.position.distanceTo(goalPostModel.position);
 
-    if (playerDistance < 1.9) {
+    if (playerDistance < 2.9) {
       // Player catches the ball
       ballCollisionDetected = true;
       ballShooted = true;
       handleMiss();
-    } else if (goalDistance < 5.5) {
+    } else if (goalDistance < 3.5) {
       ballCollisionDetected = true;
       ballShooted = true;
       handleScore();
@@ -555,6 +555,16 @@ const gameOverModal = new bootstrap.Modal(
     keyboard: false, // Prevent using the keyboard to close it
   }
 );
+
+//@ts-ignore
+document.querySelector("#playEnded").addEventListener("click", (e) => {
+  //hide the start modal
+  gameOverModal.hide();
+  // show the hiddenStart elements
+
+  window.location.reload();
+});
+
 //@ts-ignore
 startGameButton.addEventListener("click", () => {
   //@ts-ignore
@@ -577,15 +587,9 @@ function displayGameOverModal(finalScore: number) {
     console.error("Game Over Modal element not found");
     return;
   }
-
+  speedControlBar.style.visibility = "hidden";
+  missedUI.style.visibility = "hidden";
+  scoreUI.style.visibility = "hidden";
+  livesContainer.style.visibility = "hidden";
   gameOverModal.show();
-  //@ts-ignore
-  gameOverModal.addEventListener("click", (e) => {
-    //hide the start modal
-    gameOverModal.hide();
-    // show the hiddenStart elements
-
-    // Reload the window
-    window.location.reload();
-  });
 }

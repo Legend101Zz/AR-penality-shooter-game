@@ -929,12 +929,12 @@ function render() {
         // Calculate distances every frame
         const playerDistance = ball.position.distanceTo(goalkeeper.position);
         const goalDistance = ball.position.distanceTo(goalPostModel.position);
-        if (playerDistance < 1.9) {
+        if (playerDistance < 2.9) {
             // Player catches the ball
             ballCollisionDetected = true;
             ballShooted = true;
             handleMiss();
-        } else if (goalDistance < 5.5) {
+        } else if (goalDistance < 3.5) {
             ballCollisionDetected = true;
             ballShooted = true;
             handleScore();
@@ -956,6 +956,13 @@ const gameOverModal = new bootstrap.Modal(document.getElementById("gameOverModal
     keyboard: false
 });
 //@ts-ignore
+document.querySelector("#playEnded").addEventListener("click", (e)=>{
+    //hide the start modal
+    gameOverModal.hide();
+    // show the hiddenStart elements
+    window.location.reload();
+});
+//@ts-ignore
 startGameButton.addEventListener("click", ()=>{
     //@ts-ignore
     const instructionsModal = new bootstrap.Modal(document.getElementById("startGameModal"));
@@ -972,15 +979,11 @@ function displayGameOverModal(finalScore) {
         console.error("Game Over Modal element not found");
         return;
     }
+    speedControlBar.style.visibility = "hidden";
+    missedUI.style.visibility = "hidden";
+    scoreUI.style.visibility = "hidden";
+    livesContainer.style.visibility = "hidden";
     gameOverModal.show();
-    //@ts-ignore
-    gameOverModal.addEventListener("click", (e)=>{
-        //hide the start modal
-        gameOverModal.hide();
-        // show the hiddenStart elements
-        // Reload the window
-        window.location.reload();
-    });
 }
 
 },{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","hammerjs":"lHwvQ","16471dbe4b7438ad":"bc1aq","5cfd7f4445224980":"dzWQF","93c5239defc99dd0":"jNSdD","79f43e7d436e0f3b":"g4D1J","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
