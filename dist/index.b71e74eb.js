@@ -764,7 +764,7 @@ livesContainer.style.position = "absolute";
 livesContainer.style.top = "10px";
 livesContainer.style.right = "10px";
 livesContainer.style.display = "flex";
-const maxLives = 1;
+const maxLives = 3;
 let currentLives = maxLives;
 for(let i = 0; i < maxLives; i++){
     const heart = document.createElement("span");
@@ -917,14 +917,27 @@ function render() {
     if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, -3, -20);
     if (goalPostModel && model && !ballCollisionDetected) {
         // Calculate distances every frame
-        const playerDistance = ball.position.distanceTo(goalkeeper.position);
-        const goalDistance = ball.position.distanceTo(goalPostModel.position);
-        if (playerDistance < 2.9) {
+        // const playerDistance = ball.position.distanceTo(goalkeeper.position);
+        // const goalDistance = ball.position.distanceTo(goalPostModel.position);
+        const goalkeeperBoundingBox = new _three.Box3().setFromObject(goalkeeper);
+        const goalPostBoundingBox = new _three.Box3().setFromObject(goalPostModel);
+        // if (playerDistance < 2.9) {
+        //   // Player catches the ball
+        //   ballCollisionDetected = true;
+        //   ballShooted = true;
+        //   handleMiss();
+        // } else if (goalDistance < 4.5) {
+        //   ballCollisionDetected = true;
+        //   ballShooted = true;
+        //   handleScore();
+        // }
+        if (goalkeeperBoundingBox.containsPoint(ball.position)) {
             // Player catches the ball
             ballCollisionDetected = true;
             ballShooted = true;
             handleMiss();
-        } else if (goalDistance < 4.5) {
+        } else if (goalPostBoundingBox.containsPoint(ball.position)) {
+            // Ball is inside the goal post
             ballCollisionDetected = true;
             ballShooted = true;
             handleScore();
