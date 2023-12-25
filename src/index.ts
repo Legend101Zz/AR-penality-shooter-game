@@ -500,7 +500,7 @@ function handleScore() {
   score++;
   updateScoreUI();
   showScoredUI();
-  soundHit.play();
+  // soundHit.play();
   // Show cartoon character and confetti
   showCartoonCharacter();
   showConfetti();
