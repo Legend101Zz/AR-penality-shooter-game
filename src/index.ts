@@ -6,12 +6,25 @@ import "./index.css";
 // Import Hammer.js
 import Hammer from "hammerjs";
 
+//sound lib import
+import { Howl, Howler } from "howler";
+
 //=========VARIABLES=========
 const footImg = new URL("../assets/football.png", import.meta.url).href;
 const model = new URL("../assets/football_net.glb", import.meta.url).href;
 const fieldModel = new URL("../assets/football_field.glb", import.meta.url)
   .href;
 const player = new URL("../assets/keep2.png", import.meta.url).href;
+const MissMusic = new URL("../assets/boo.mp3", import.meta.url).href;
+const HitMusic = new URL("../assets/whistle.mp3", import.meta.url).href;
+
+const soundMiss = new Howl({
+  src: [MissMusic],
+});
+
+const soundHit = new Howl({
+  src: [HitMusic],
+});
 
 let field: any;
 let goalPostModel: any;
@@ -467,7 +480,7 @@ function handleMiss() {
   console.log(currentLives);
   // Update the lives UI
   updateLivesUI();
-
+  soundMiss.play();
   // Show missed UI
   showMissedUI();
 
@@ -487,6 +500,7 @@ function handleScore() {
   score++;
   updateScoreUI();
   showScoredUI();
+  soundHit.play();
   // Show cartoon character and confetti
   showCartoonCharacter();
   showConfetti();
@@ -514,6 +528,9 @@ function render() {
 
     const goalkeeperBoundingBox = new THREE.Box3().setFromObject(goalkeeper);
     const goalPostBoundingBox = new THREE.Box3().setFromObject(goalPostModel);
+
+    const expansionAmount = 1.4; // Adjust this value as needed
+    goalPostBoundingBox.expandByScalar(expansionAmount);
 
     // if (playerDistance < 2.9) {
     //   // Player catches the ball
