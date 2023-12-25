@@ -62,43 +62,35 @@ const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const shootingPoint = new THREE.Mesh(pointGeometry, pointMaterial);
 // shootingPoint.position.set(-6, -6, 0);
 shootingPoint.visible = false; // Initially invisible
-
-function animateShootingPoint() {
-  const animationDuration = 5000; // Time taken for the point to cover the whole goal post
+function animateShootingPoint(model: any) {
+  const animationDuration = 3000; // Time taken for the point to cover the whole goal post
   const startTime = Date.now();
+
+  // Calculate the center of the goal-post model
+  const goalPostCenter = new THREE.Vector3();
+  const goalPostDimensions = new THREE.Box3().setFromObject(model);
+  goalPostDimensions.getCenter(goalPostCenter);
 
   function updateAnimation() {
     const currentTime = Date.now();
     const elapsedTime = currentTime - startTime;
     const progress = (elapsedTime % animationDuration) / animationDuration;
 
-    // Define the rectangular path
-    const rectWidth = 12;
-    const rectHeight = 5;
+    const angle = progress * Math.PI * 2; // Full circle in the given duration
 
-    let x = 15,
-      y = 0;
+    // Define the radius of the circular motion
+    const radius =
+      Math.min(
+        goalPostDimensions.max.x - goalPostDimensions.min.x,
+        goalPostDimensions.max.y - goalPostDimensions.min.y
+      ) / 3;
 
-    if (progress < 0.25) {
-      // Move to the right
-      x = rectWidth * progress * 4;
-      y = 0;
-    } else if (progress < 0.5) {
-      // Move up
-      x = rectWidth;
-      y = rectHeight * (progress - 0.25) * 4;
-    } else if (progress < 0.75) {
-      // Move to the left
-      x = rectWidth - rectWidth * (progress - 0.5) * 4;
-      y = rectHeight;
-    } else {
-      // Move down
-      x = 0;
-      y = rectHeight - rectHeight * (progress - 0.75) * 4;
-    }
+    // Calculate the position of the shooting point in a circular motion
+    const x = goalPostCenter.x + radius * Math.cos(angle);
+    const y = goalPostCenter.y + radius * Math.sin(angle);
 
     // Update the position of the shooting point
-    shootingPoint.position.set(-10, y - 3, x - 2);
+    shootingPoint.position.set(0, y - 3.5, x);
 
     requestAnimationFrame(updateAnimation);
   }
@@ -206,6 +198,8 @@ gltfLoader.load(
     gltf.scene.add(shootingPoint);
     goalkeeper.visible = true;
     ball.visible = true;
+    // Start animating the shooting point by adding goalPostModel
+    animateShootingPoint(goalPostModel);
     trackerGroup.add(goalPostModel, goalkeeper, ball);
   },
   undefined,
@@ -232,9 +226,6 @@ placementUI.addEventListener("click", () => {
   // Make the shooting point visible when placement is done
   shootingPoint.visible = true;
 
-  // Start animating the shooting point
-  animateShootingPoint();
-
   // Set up Hammer.js for gesture recognition
   const hammer = new Hammer(document.body);
 
@@ -245,6 +236,7 @@ placementUI.addEventListener("click", () => {
     // arrow.visible = true;
     // Using event.direction instead of event.velocityX and event.velocityY
     const direction = new THREE.Vector2(event.direction, 0).normalize();
+    //@ts-ignore
     const speed = parseFloat(speedControlBar.value);
 
     // Update the arrow UI based on the calculated direction and speed
@@ -525,7 +517,7 @@ function render() {
       ballCollisionDetected = true;
       ballShooted = true;
       handleMiss();
-    } else if (goalDistance < 3.5) {
+    } else if (goalDistance < 4.5) {
       ballCollisionDetected = true;
       ballShooted = true;
       handleScore();
