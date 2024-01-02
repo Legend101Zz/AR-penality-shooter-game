@@ -293,7 +293,7 @@ document.body.appendChild(scoreUI);
 
 // Function to show scored UI
 function showScoredUI() {
-  blackBackground.textContent = "Scored!";
+  blackBackground.textContent = `Scored! : ${score}`;
   blackBackground.style.display = "flex";
   setTimeout(() => {
     blackBackground.style.display = "none";
@@ -335,10 +335,11 @@ const livesContainer = document.createElement("div");
 livesContainer.style.position = "absolute";
 livesContainer.style.top = "10px";
 livesContainer.style.right = "10px";
+livesContainer.style.fontSize = "24px";
 livesContainer.style.display = "none";
 
 const maxLives = 3;
-let currentLives = maxLives;
+let currentLives = 3;
 
 for (let i = 0; i < maxLives; i++) {
   const heart = document.createElement("span");
@@ -353,9 +354,14 @@ document.body.appendChild(livesContainer);
 function updateLivesUI() {
   // Remove a heart (life) from the UI
   const hearts = livesContainer.querySelectorAll(".heart-icon");
-  if (currentLives > 0) {
-    //@ts-ignore
-    hearts[maxLives - currentLives].style.display = "none";
+
+  if (currentLives > 0 && currentLives <= maxLives) {
+    const heartIndex = maxLives - currentLives;
+    const heart = hearts[heartIndex] as HTMLElement | null;
+
+    if (heart) {
+      heart.style.display = "none";
+    }
   }
 }
 
@@ -488,22 +494,22 @@ function moveBallToInitialPosition() {
 // ===AGG FUNCTION TO HANDLE MISS ======
 
 function handleMiss() {
-  // Decrement the number of lives
-  currentLives--;
-  console.log(currentLives);
-  // Update the lives UI
-  updateLivesUI();
-  soundMiss.play();
-  // Show missed UI
-  showMissedUI();
+  if (!ballShooted) {
+    // Update the lives UI
+    updateLivesUI();
+    currentLives--;
+    soundMiss.play();
+    // Show missed UI
+    showMissedUI();
 
-  if (currentLives <= 0) {
-    displayGameOverModal(score);
-  } else {
-    // Reset the ball position after a delay
-    setTimeout(() => {
-      moveBallToInitialPosition();
-    }, 300);
+    if (currentLives <= 0) {
+      displayGameOverModal(score);
+    } else {
+      // Reset the ball position after a delay
+      setTimeout(() => {
+        moveBallToInitialPosition();
+      }, 300);
+    }
   }
 }
 
@@ -532,6 +538,7 @@ function handleScore() {
 function render() {
   camera.updateFrame(renderer);
   ballShooted = false;
+  console.log(currentLives);
   if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, -3, -20);
 
   if (goalPostModel && model && !ballCollisionDetected) {

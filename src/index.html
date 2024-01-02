@@ -55,11 +55,37 @@
       }
 
       /* Game Over Modal */
-      #gameOverModal .modal-dialog {
-        width: 80%; /* Adjust the width as needed */
-        /* margin-top: 20vh; */
-margin: auto;
-      }
+   /* Game Over Modal */
+#gameOverModal .modal-dialog {
+  width: 80%; /* Adjust the width as needed */
+  margin: auto;
+}
+
+#gameOverModal .modal-body {
+  text-align: center;
+}
+
+#gameOverScore {
+  font-size: 24px;
+  font-weight: bold;
+  color: #f2894b; /* Text color */
+}
+
+#playEnded {
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #dc3545;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#playEnded:hover {
+  background-color: #c82333;
+}
 
       #startGameButton {
         padding: 10px 20px;
