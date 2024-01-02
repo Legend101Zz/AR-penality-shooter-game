@@ -60,6 +60,12 @@ body {
   animation: blast 3s ease-out infinite;
 }
 
+#score-ui,
+#missed-ui,
+#lives-container {
+  display: none;
+}
+
 @keyframes bounce {
   0%,
   20%,

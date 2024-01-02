@@ -266,12 +266,17 @@ placementUI.addEventListener("click", () => {
 
 const blackBackground = document.createElement("div");
 blackBackground.style.position = "absolute";
-blackBackground.style.bottom = "10px";
+blackBackground.style.bottom = "50%";
 blackBackground.style.left = "50%";
-blackBackground.style.transform = "translateX(-50%)";
+blackBackground.style.transform = "translate(-50%, 50%)";
 blackBackground.style.width = "200px";
 blackBackground.style.padding = "10px";
 blackBackground.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+blackBackground.style.color = "#fff";
+blackBackground.style.fontSize = "24px"; // Set the font size
+blackBackground.style.textAlign = "center"; // Center the text
+blackBackground.style.lineHeight = "60px"; // Set the line height for vertical centering
+blackBackground.style.display = "none";
 document.body.appendChild(blackBackground);
 
 //=========SCORE-UI=========
@@ -281,13 +286,18 @@ scoreUI.id = "score-ui";
 scoreUI.style.position = "absolute";
 scoreUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
 scoreUI.style.color = "#fff";
+scoreUI.style.fontSize = "24px"; // Set the font size
+scoreUI.style.textAlign = "center"; // Center the text
+scoreUI.style.lineHeight = "60px"; // Set the line height for vertical centering
 document.body.appendChild(scoreUI);
 
 // Function to show scored UI
 function showScoredUI() {
-  scoreUI.textContent = "Scored!";
+  blackBackground.textContent = "Scored!";
+  blackBackground.style.display = "flex";
   setTimeout(() => {
-    scoreUI.textContent = "";
+    blackBackground.style.display = "none";
+    blackBackground.textContent = "";
   }, 2000);
 }
 
@@ -297,13 +307,18 @@ missedUI.id = "missed-ui";
 missedUI.style.position = "absolute";
 missedUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
 missedUI.style.color = "#ff0000";
+missedUI.style.fontSize = "24px"; // Set the font size
+missedUI.style.textAlign = "center"; // Center the text
+missedUI.style.lineHeight = "60px"; // Set the line height for vertical centering
 document.body.appendChild(missedUI);
 
 // Function to show missed UI
 function showMissedUI() {
-  missedUI.textContent = "Missed!";
+  blackBackground.textContent = "Missed!";
+  blackBackground.style.display = "flex";
   setTimeout(() => {
-    missedUI.textContent = "";
+    blackBackground.style.display = "none";
+    blackBackground.textContent = "";
   }, 2000);
 }
 
@@ -312,17 +327,15 @@ function showMissedUI() {
 // Update the score UI function
 function updateScoreUI() {
   scoreUI.textContent = `Score: ${score}`;
+  scoreUI.style.display = "block"; // Show the score UI
 }
-
-// Set up the initial score UI
-updateScoreUI();
 
 // Add lives UI
 const livesContainer = document.createElement("div");
 livesContainer.style.position = "absolute";
 livesContainer.style.top = "10px";
 livesContainer.style.right = "10px";
-livesContainer.style.display = "flex";
+livesContainer.style.display = "none";
 
 const maxLives = 3;
 let currentLives = maxLives;
@@ -523,36 +536,36 @@ function render() {
 
   if (goalPostModel && model && !ballCollisionDetected) {
     // Calculate distances every frame
-    // const playerDistance = ball.position.distanceTo(goalkeeper.position);
-    // const goalDistance = ball.position.distanceTo(goalPostModel.position);
+    const playerDistance = ball.position.distanceTo(goalkeeper.position);
+    const goalDistance = ball.position.distanceTo(goalPostModel.position);
 
-    const goalkeeperBoundingBox = new THREE.Box3().setFromObject(goalkeeper);
-    const goalPostBoundingBox = new THREE.Box3().setFromObject(goalPostModel);
+    // const goalkeeperBoundingBox = new THREE.Box3().setFromObject(goalkeeper);
+    // const goalPostBoundingBox = new THREE.Box3().setFromObject(goalPostModel);
 
-    const expansionAmount = 1.4; // Adjust this value as needed
-    goalPostBoundingBox.expandByScalar(expansionAmount);
+    // const expansionAmount = 1.4; // Adjust this value as needed
+    // goalPostBoundingBox.expandByScalar(expansionAmount);
 
-    // if (playerDistance < 2.9) {
-    //   // Player catches the ball
-    //   ballCollisionDetected = true;
-    //   ballShooted = true;
-    //   handleMiss();
-    // } else if (goalDistance < 4.5) {
-    //   ballCollisionDetected = true;
-    //   ballShooted = true;
-    //   handleScore();
-    // }
-    if (goalkeeperBoundingBox.containsPoint(ball.position)) {
+    if (playerDistance < 2.9) {
       // Player catches the ball
       ballCollisionDetected = true;
       ballShooted = true;
       handleMiss();
-    } else if (goalPostBoundingBox.containsPoint(ball.position)) {
-      // Ball is inside the goal post
+    } else if (goalDistance < 4.5) {
       ballCollisionDetected = true;
       ballShooted = true;
       handleScore();
     }
+    // if (goalPostBoundingBox.containsPoint(ball.position)) {
+    //   // Ball is inside the goal post
+    //   ballCollisionDetected = true;
+    //   ballShooted = true;
+    //   handleScore();
+    // } else if (goalkeeperBoundingBox.containsPoint(ball.position)) {
+    //   // Player catches the ball
+    //   ballCollisionDetected = true;
+    //   ballShooted = true;
+    //   handleMiss();
+    // }
   }
 
   renderer.render(scene, camera);
@@ -595,6 +608,11 @@ startGameButton.addEventListener("click", () => {
     document.getElementById("startGameModal")
   );
   instructionsModal.hide();
+
+  updateScoreUI();
+
+  // Show the lives UI
+  livesContainer.style.display = "flex";
 
   // Trigger the placement UI click event programmatically
   const placementUI = document.getElementById("zappar-placement-ui");
