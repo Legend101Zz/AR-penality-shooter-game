@@ -5,31 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Football Goalkeeper Game</title>
 
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-btDRPyDDRRtF7flF1oROtL3fruWI8Xa1wDcRqO8HZ0j7NSeDG8Xz+yVdE5SW/3x" crossorigin="anonymous">
+
     <style>body {
-  color: #f2894b;
-  background-color: #3f3f41;
+  color: #ffc107;
+  background-color: #343a40;
 }
 
 .modal-content {
-  color: #f2894b;
-  background-color: #3f3f41;
-  border-radius: 10px;
+  color: #ffc107;
+  background-color: #343a40;
+  border-radius: 15px;
   box-shadow: 0 0 20px #00000080;
 }
 
 .modal-header {
-  color: #fff;
-  background-color: #f2894b;
-  border-radius: 10px 10px 0 0;
+  color: #343a40;
+  background-color: #ffc107;
+  border-radius: 15px 15px 0 0;
 }
 
 .modal-title {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
 }
 
 .modal-body {
-  font-size: 14px;
+  font-size: 10px;
+}
+
+p.highlight {
+  background-color: #ffc107;
+  border-radius: 5px;
+  padding: 5px;
+  display: inline;
 }
 
 ul {
@@ -38,22 +48,27 @@ ul {
 }
 
 ul li {
-  margin-bottom: 12px;
+  margin-bottom: 15px;
+  padding-left: 25px;
+  position: relative;
+}
+
+ul li:before {
+  content: "•";
+  color: #ffc107;
+  font-size: 20px;
+  position: absolute;
+  left: 0;
 }
 
 .modal-footer {
   text-align: center;
-  background-color: #f2894b;
-  border-radius: 0 0 10px 10px;
+  background-color: #ffc107;
+  border-radius: 0 0 15px 15px;
 }
 
-#startGameModal .modal-dialog {
-  width: 100%;
-  margin-top: 50vh;
-}
-
-#gameOverModal .modal-dialog {
-  width: 80%;
+#startGameModal .modal-dialog, #gameOverModal .modal-dialog {
+  width: 90%;
   margin: auto;
 }
 
@@ -62,59 +77,57 @@ ul li {
 }
 
 #gameOverScore {
-  color: #f2894b;
-  font-size: 24px;
+  color: #ffc107;
+  font-size: 28px;
   font-weight: bold;
 }
 
 #playEnded {
-  color: #fff;
+  color: #343a40;
   cursor: pointer;
-  background-color: #dc3545;
+  background-color: #ffc107;
   border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 18px;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 20px;
   font-weight: bold;
   transition: background-color .3s;
 }
 
 #playEnded:hover {
-  background-color: #c82333;
+  background-color: #ffca28;
 }
 
 #startGameButton {
-  color: #fff;
+  color: #343a40;
   cursor: pointer;
-  background-color: #dc3545;
+  background-color: #ffc107;
   border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 18px;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 20px;
   font-weight: bold;
   transition: background-color .3s;
 }
 
 #startGameButton:hover {
-  background-color: #c82333;
+  background-color: #ffca28;
 }
 
 </style>
-
   </head>
   <body>
     <script src="/index.b71e74eb.js" defer=""></script>
 
     <div id="cartoonCharacter" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)">
-      <img src="/win2.540a37b7.png" alt="Cartoon Character" style="width: 200px; height: auto">
+      <img src="/win2.540a37b7.png" alt="Cartoon Character" style="width: 250px; height: auto">
     </div>
-    
+
     <div id="confetti" style="display: none; position: absolute; top: 30%; left: 10%; transform: translate(-50%, -50%)">
-      <img src="/win.c8ea3fa8.png" alt="Confetti" style="width: 200px; height: auto">
+      <img src="/win.c8ea3fa8.png" alt="Confetti" style="width: 250px; height: auto">
     </div>
     <div id="zappar-placement-ui">
-      Position the Field and let the game Begin
-
+      <!-- Start Game Modal -->
       <div id="startGameModal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-bs-dismiss="modal">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
@@ -123,9 +136,14 @@ ul li {
             </div>
             <div class="modal-body">
               <p>
-                Welcome to the Football Goalkeeper Game! Before you start
-                playing, please read the instructions below:
+                <b>
+                  <span class="highlight">Welcome to the Football Goalkeeper Game!</span>
+                  <br>
+                </b>
+                <br>
+                Before you start playing, please read the instructions below:
               </p>
+
               <ul>
                 <li>Wait for the game to start after positioning the field.</li>
                 <li>Swipe on the screen to shoot the ball.</li>
@@ -149,9 +167,7 @@ ul li {
             </div>
           </div>
         </div>
-        </div>
       </div>
- 
 
       <!-- Game Over Modal -->
       <div id="gameOverModal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" style="display: none">
@@ -172,14 +188,9 @@ ul li {
           </div>
         </div>
       </div>
-        <!-- Bootstrap CSS and JavaScript -->
-    <!-- <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp"
-    crossorigin="anonymous"
-  /> -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"></script>
-    
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
