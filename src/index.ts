@@ -7,7 +7,7 @@ import "./index.css";
 import Hammer from "hammerjs";
 
 //sound lib import
-import { Howl, Howler } from "howler";
+import { Howl } from "howler";
 
 //=========VARIABLES=========
 const footImg = new URL("../assets/football.png", import.meta.url).href;
@@ -269,26 +269,29 @@ blackBackground.style.position = "absolute";
 blackBackground.style.bottom = "50%";
 blackBackground.style.left = "50%";
 blackBackground.style.transform = "translate(-50%, 50%)";
-blackBackground.style.width = "200px";
-blackBackground.style.padding = "10px";
+blackBackground.style.width = "150px";
+// blackBackground.style.padding = "10px";
 blackBackground.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
 blackBackground.style.color = "#fff";
 blackBackground.style.fontSize = "24px"; // Set the font size
 blackBackground.style.textAlign = "center"; // Center the text
-blackBackground.style.lineHeight = "60px"; // Set the line height for vertical centering
+blackBackground.style.lineHeight = "45px"; // Set the line height for vertical centering
+blackBackground.style.paddingLeft = "10px";
+blackBackground.style.paddingRight = "10px";
+blackBackground.style.borderRadius = "5px";
 blackBackground.style.display = "none";
+blackBackground.style.alignItems = "center";
 document.body.appendChild(blackBackground);
 
 //=========SCORE-UI=========
 let score = 0;
 const scoreUI = document.createElement("div");
 scoreUI.id = "score-ui";
-scoreUI.style.position = "absolute";
+// scoreUI.style.position = "absolute";
 scoreUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
 scoreUI.style.color = "#fff";
 scoreUI.style.fontSize = "24px"; // Set the font size
 scoreUI.style.textAlign = "center"; // Center the text
-scoreUI.style.lineHeight = "60px"; // Set the line height for vertical centering
 document.body.appendChild(scoreUI);
 
 // Function to show scored UI
@@ -309,7 +312,6 @@ missedUI.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
 missedUI.style.color = "#ff0000";
 missedUI.style.fontSize = "24px"; // Set the font size
 missedUI.style.textAlign = "center"; // Center the text
-missedUI.style.lineHeight = "60px"; // Set the line height for vertical centering
 document.body.appendChild(missedUI);
 
 // Function to show missed UI
@@ -499,8 +501,9 @@ function handleMiss() {
     updateLivesUI();
     currentLives--;
     soundMiss.play();
-    // Show missed UI
-    showMissedUI();
+    // Show missed UI if not last life
+    if(currentLives > 0)
+      showMissedUI();
 
     if (currentLives <= 0) {
       displayGameOverModal(score);
@@ -517,8 +520,10 @@ function handleMiss() {
 function handleScore() {
   // Increment the score
   score++;
+  soundHit.play();
   updateScoreUI();
-  showScoredUI();
+  if(currentLives > 0)
+    showScoredUI();
   // soundHit.play();
   // Show cartoon character and confetti
   showCartoonCharacter();

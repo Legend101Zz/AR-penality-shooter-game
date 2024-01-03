@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Penalty Shooter</title>
+    <style>
+        body {
+          background-color: #343a40; /* Dark background color */
+          color: #ffc107; /* Text color */
+        }
+
+        .modal-content {
+          background-color: #343a40; /* Dark background color */
+          color: #ffc107; /* Text color */
+          border-radius: 15px;
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+          padding: 20px; /* Add some padding */
+        }
+
+        .modal-header {
+          background-color: #ffc107; /* Primary color */
+          color: #343a40; /* Dark background color */
+          border-radius: 5px;
+        }
+
+        .modal-title {
+          font-size: 28px;
+          font-weight: bold;
+          padding: 10px;
+        }
+
+        .modal-body {
+          font-size: 10px;
+          margin: 20px 0; /* Add some margin */
+        }
+
+        /* Game Start Modal */
+        #startGameModal {
+        display: flex; /* Use flexbox to center the content */
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        }
+
+        #startGameModal .modal-dialog {
+          width: 100%; /* Full width */
+          height: 100%; /* Full height */
+          margin: 0; /* Remove margin */
+        }
+
+        #startGameButton {
+          padding: 12px 24px;
+          font-size: 20px;
+          font-weight: bold;
+          color: #343a40; /* Dark background color */
+          background-color: #ffc107; /* Primary color */
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+        }
+
+        #startGameButton:hover {
+          background-color: #ffca28; /* Primary color - lighter shade */
+        }
+      </style>
+</head>
+<body>
+    <!-- Start Game Modal -->
+    <div
+        id="startGameModal"
+        class="modal fade"
+        tabindex="-1"
+        data-backdrop="static"
+        data-keyboard="false"
+        data-bs-dismiss="modal"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Football Goalkeeper Game</h5>
+            </div>
+            <div class="modal-body">
+              <p>
+                <b>
+                  <span class="highlight"
+                    >Welcome to the Football Goalkeeper Game!</span
+                  >
+                  <br />
+                </b>
+                <br />
+                Before you start playing, please read the instructions below:
+              </p>
+
+              <ul>
+                <li>Wait for the game to start after positioning the field.</li>
+                <li>Swipe on the screen to shoot the ball.</li>
+                <li>Use the red dot as a directional arrow for shooting.</li>
+                <li>
+                  Adjust the speed of the shot using the given controller.
+                </li>
+                <li>
+                  Your goal is to score points by shooting the ball into the
+                  goal.
+                </li>
+                <li>
+                  Watch out for the goalkeeper and try to avoid being caught!
+                </li>
+              </ul>
+            </div>
+            <div class="modal-footer">
+              <a href="game.html">
+                <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+                id="startGameButton"
+                >
+                Start Game
+                </button>
+              </a>
+            </div>
+          </div>
+        </div>
+    </div>
+</body>
+</html>
