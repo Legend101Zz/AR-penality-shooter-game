@@ -7,7 +7,10 @@ html, body {
 
 #score-ui {
   color: #fff;
-  font-size: 24px;
+  border-radius: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 20px;
   position: absolute;
   top: 10px;
   left: 10px;
@@ -15,7 +18,10 @@ html, body {
 
 #missed-ui, #scored-ui {
   color: red;
-  font-size: 36px;
+  border-radius: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 30px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -76,6 +82,26 @@ html, body {
   100% {
     opacity: 0;
     transform: scale(2);
+  }
+}
+
+#landscape-warning {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background-color: #000000bf;
+  justify-content: center;
+  align-items: center;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+@media screen and (orientation: landscape) {
+  #landscape-warning {
+    display: flex;
   }
 }
 
