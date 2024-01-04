@@ -543,12 +543,12 @@ var _hammerjsDefault = parcelHelpers.interopDefault(_hammerjs);
 //sound lib import
 var _howler = require("howler");
 //=========VARIABLES=========
-const footImg = new URL(require("14de642ef8614f02")).href;
-const model = new URL(require("378dbf781bc17b80")).href;
-const fieldModel = new URL(require("6337f843f3216a5e")).href;
-const player = new URL(require("607358afd0ebba5c")).href;
-const MissMusic = new URL(require("437eab7a101cb86d")).href;
-const HitMusic = new URL(require("78c0a53e9b0a67b0")).href;
+const footImg = new URL(require("16471dbe4b7438ad")).href;
+const model = new URL(require("5cfd7f4445224980")).href;
+const fieldModel = new URL(require("93c5239defc99dd0")).href;
+const player = new URL(require("79f43e7d436e0f3b")).href;
+const MissMusic = new URL(require("156be869cc9746af")).href;
+const HitMusic = new URL(require("23eddff735d31135")).href;
 const soundMiss = new (0, _howler.Howl)({
     src: [
         MissMusic
@@ -705,6 +705,9 @@ const placementUI = document.getElementById("zappar-placement-ui") || document.c
 placementUI.addEventListener("click", ()=>{
     placementUI.remove();
     hasPlaced = true;
+    updateScoreUI();
+    // Show the lives UI
+    livesContainer.style.display = "flex";
     // Make the shooting point visible when placement is done
     shootingPoint.visible = true;
     // Set up Hammer.js for gesture recognition
@@ -986,11 +989,13 @@ function render() {
     renderer.render(scene, camera);
 }
 // === Show the instructions modal when the page loads======
-window.addEventListener("load", ()=>{
-    //@ts-ignore
-    const instructionsModal = new bootstrap.Modal(document.getElementById("startGameModal"));
-    instructionsModal.show();
-});
+// window.addEventListener("load", () => {
+//   //@ts-ignore
+//   const instructionsModal = new bootstrap.Modal(
+//     document.getElementById("startGameModal")
+//   );
+//   instructionsModal.show();
+// });
 // Add an event listener to the "Start Game" button in the instructions modal
 const startGameButton = document.getElementById("startGameButton");
 //@ts-ignore
@@ -1003,16 +1008,13 @@ document.querySelector("#playEnded").addEventListener("click", (e)=>{
     //hide the start modal
     gameOverModal.hide();
     // show the hiddenStart elements
-    window.location.reload();
+    window.location.href = "instructions.html";
 });
 //@ts-ignore
 startGameButton.addEventListener("click", ()=>{
     //@ts-ignore
     const instructionsModal = new bootstrap.Modal(document.getElementById("startGameModal"));
     instructionsModal.hide();
-    updateScoreUI();
-    // Show the lives UI
-    livesContainer.style.display = "flex";
     // Trigger the placement UI click event programmatically
     const placementUI = document.getElementById("zappar-placement-ui");
     //@ts-ignore
@@ -1029,10 +1031,12 @@ function displayGameOverModal(finalScore) {
     missedUI.style.visibility = "hidden";
     scoreUI.style.visibility = "hidden";
     livesContainer.style.visibility = "hidden";
+    const gameOverScore = document.getElementById("gameOverScore");
+    if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
     gameOverModal.show();
 }
 
-},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","hammerjs":"lHwvQ","howler":"5Vjgk","14de642ef8614f02":"bc1aq","378dbf781bc17b80":"dzWQF","6337f843f3216a5e":"jNSdD","607358afd0ebba5c":"g4D1J","437eab7a101cb86d":"3EAeY","78c0a53e9b0a67b0":"a91rT","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","./index.css":"irmnC","hammerjs":"lHwvQ","howler":"5Vjgk","16471dbe4b7438ad":"bc1aq","5cfd7f4445224980":"dzWQF","93c5239defc99dd0":"jNSdD","79f43e7d436e0f3b":"g4D1J","156be869cc9746af":"3EAeY","23eddff735d31135":"a91rT","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -32208,7 +32212,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("917823cb401abd7b"));
+                let url = new URL(require("a14074e24957f0de"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), false, false, false, false);
             }),
@@ -32218,7 +32222,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_face on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("917823cb401abd7b"));
+                let url = new URL(require("a14074e24957f0de"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, false);
             }),
@@ -32228,7 +32232,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_full_head_simplified on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("6e978af753548875"));
+                let url = new URL(require("3d28a4b1653f8e20"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, fillNeck);
             }),
@@ -32323,14 +32327,14 @@ function initialize(opts) {
 }
 function loadDefaultFaceModel(o) {
     return __awaiter(this, void 0, void 0, function*() {
-        let url = new URL(require("6704acc4c173f581"));
+        let url = new URL(require("d9cb5cfd7f577c68"));
         let data = yield fetch(url.toString());
         let ab = yield data.arrayBuffer();
         client === null || client === void 0 || client.face_tracker_model_load_from_memory(o, ab);
     });
 }
 
-},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","917823cb401abd7b":"htM1Y","6e978af753548875":"e04H3","6704acc4c173f581":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
+},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","a14074e24957f0de":"htM1Y","3d28a4b1653f8e20":"e04H3","d9cb5cfd7f577c68":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "barcode_format_t", ()=>(0, _zapparNative.barcode_format_t));
@@ -39871,10 +39875,10 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments
 let messageManager = new (0, _messages.MsgManager)();
 function launchWorker(worker) {
     return __awaiter(this, void 0, void 0, function*() {
-        if (!worker) worker = new Worker(require("ab652f28dfeaf217"));
+        if (!worker) worker = new Worker(require("54517480ba6dadbf"));
         worker.postMessage({
             t: "wasm",
-            url: new URL(require("b04c5d17ef5839d9")).toString()
+            url: new URL(require("572d36e54ba46115")).toString()
         });
         yield waitForLoad(worker);
         function sendOutgoing() {
@@ -39900,7 +39904,7 @@ function waitForLoad(w) {
     });
 }
 
-},{"./messages":"hdBLR","ab652f28dfeaf217":"35JNJ","b04c5d17ef5839d9":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
+},{"./messages":"hdBLR","54517480ba6dadbf":"35JNJ","572d36e54ba46115":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MsgManager", ()=>MsgManager);

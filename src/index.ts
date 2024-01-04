@@ -235,7 +235,10 @@ const placementUI =
 placementUI.addEventListener("click", () => {
   placementUI.remove();
   hasPlaced = true;
+  updateScoreUI();
 
+  // Show the lives UI
+  livesContainer.style.display = "flex";
   // Make the shooting point visible when placement is done
   shootingPoint.visible = true;
 
@@ -502,8 +505,7 @@ function handleMiss() {
     currentLives--;
     soundMiss.play();
     // Show missed UI if not last life
-    if(currentLives > 0)
-      showMissedUI();
+    if (currentLives > 0) showMissedUI();
 
     if (currentLives <= 0) {
       displayGameOverModal(score);
@@ -522,8 +524,7 @@ function handleScore() {
   score++;
   soundHit.play();
   updateScoreUI();
-  if(currentLives > 0)
-    showScoredUI();
+  if (currentLives > 0) showScoredUI();
   // soundHit.play();
   // Show cartoon character and confetti
   showCartoonCharacter();
@@ -585,13 +586,13 @@ function render() {
 
 // === Show the instructions modal when the page loads======
 
-window.addEventListener("load", () => {
-  //@ts-ignore
-  const instructionsModal = new bootstrap.Modal(
-    document.getElementById("startGameModal")
-  );
-  instructionsModal.show();
-});
+// window.addEventListener("load", () => {
+//   //@ts-ignore
+//   const instructionsModal = new bootstrap.Modal(
+//     document.getElementById("startGameModal")
+//   );
+//   instructionsModal.show();
+// });
 
 // Add an event listener to the "Start Game" button in the instructions modal
 const startGameButton = document.getElementById("startGameButton");
@@ -610,7 +611,7 @@ document.querySelector("#playEnded").addEventListener("click", (e) => {
   gameOverModal.hide();
   // show the hiddenStart elements
 
-  window.location.reload();
+  window.location.href = "instructions.html";
 });
 
 //@ts-ignore
@@ -620,11 +621,6 @@ startGameButton.addEventListener("click", () => {
     document.getElementById("startGameModal")
   );
   instructionsModal.hide();
-
-  updateScoreUI();
-
-  // Show the lives UI
-  livesContainer.style.display = "flex";
 
   // Trigger the placement UI click event programmatically
   const placementUI = document.getElementById("zappar-placement-ui");
@@ -644,5 +640,7 @@ function displayGameOverModal(finalScore: number) {
   missedUI.style.visibility = "hidden";
   scoreUI.style.visibility = "hidden";
   livesContainer.style.visibility = "hidden";
+  const gameOverScore = document.getElementById("gameOverScore");
+  if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
   gameOverModal.show();
 }

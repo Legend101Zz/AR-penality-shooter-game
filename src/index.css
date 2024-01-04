@@ -43,7 +43,7 @@ body {
 
 #zappar-placement-ui {
   position: absolute;
-  bottom: 50px;
+  bottom: 250px;
   width: 200px;
   left: calc(50% - 100px);
 
@@ -112,7 +112,12 @@ body {
   left: 0; /* Full height */
   width: 100%; /* Full width */
   height: 100%; /* Full height */
-  background-color: rgba(0, 0, 0, 0.75); /* Black background with some transparency */
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.75
+  ); /* Black background with some transparency */
   z-index: 9999; /* Above all other elements */
 }
 
