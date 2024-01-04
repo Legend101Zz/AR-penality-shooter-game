@@ -507,7 +507,7 @@ function handleMiss() {
     // Show missed UI if not last life
     if (currentLives > 0) showMissedUI();
 
-    if (currentLives <= 0) {
+    if (currentLives <= 2) {
       displayGameOverModal(score);
     } else {
       // Reset the ball position after a delay
@@ -636,11 +636,12 @@ function displayGameOverModal(finalScore: number) {
     console.error("Game Over Modal element not found");
     return;
   }
+  const gameOverScore = document.getElementById("gameOverScore");
+  if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
   speedControlBar.style.visibility = "hidden";
   missedUI.style.visibility = "hidden";
   scoreUI.style.visibility = "hidden";
   livesContainer.style.visibility = "hidden";
-  const gameOverScore = document.getElementById("gameOverScore");
-  if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
+
   gameOverModal.show();
 }
