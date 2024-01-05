@@ -20,10 +20,12 @@ const HitMusic = new URL("../assets/whistle.mp3", import.meta.url).href;
 
 const soundMiss = new Howl({
   src: [MissMusic],
+  html5: true,
 });
 
 const soundHit = new Howl({
   src: [HitMusic],
+  html5: true,
 });
 
 let field: any;

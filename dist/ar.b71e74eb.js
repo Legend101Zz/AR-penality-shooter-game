@@ -552,12 +552,14 @@ const HitMusic = new URL(require("23eddff735d31135")).href;
 const soundMiss = new (0, _howler.Howl)({
     src: [
         MissMusic
-    ]
+    ],
+    html5: true
 });
 const soundHit = new (0, _howler.Howl)({
     src: [
         HitMusic
-    ]
+    ],
+    html5: true
 });
 let field;
 let goalPostModel;
