@@ -35,13 +35,13 @@ let ballShooted = false;
 let ballCollisionDetected = false;
 
 //============WINDOW REDIRECT============
-window.addEventListener("beforeunload", function (e) {
-  var reload = confirm("are you sure you want to reload the game?");
-  if (reload) {
-    location.reload(); // Refresh the site, not needed really.
-    location.href = "/index.html"; // Redirect.
-  }
-});
+
+window.onbeforeunload = function () {
+  window.setTimeout(function () {
+    window.location = "/index.html";
+  }, 0);
+  window.onbeforeunload = null; // necessary to prevent infinite loop, that kills your browser
+};
 
 //=========ZAPPAR + THREEJS START CODE=========
 
@@ -523,7 +523,7 @@ function handleMiss() {
     // Show missed UI if not last life
     if (currentLives > 0) showMissedUI();
 
-    if (currentLives <= 2) {
+    if (currentLives <= 0) {
       displayGameOverModal(score);
     } else {
       // Reset the ball position after a delay
