@@ -565,11 +565,13 @@ let hasPlaced = false;
 let ballShooted = false;
 let ballCollisionDetected = false;
 //============WINDOW REDIRECT============
-window.addEventListener("beforeunload", function(e) {
-    e.preventDefault();
-    e.returnValue = "";
-    window.location.href = "/instructions.html";
-});
+// window.addEventListener("beforeunload", function (e) {
+//   var reload = confirm("are you sure you want to reload the game?");
+//   if (reload) {
+//     location.reload(); // Refresh the site, not needed really.
+//     location.href = "/instructions.html"; // Redirect.
+//   }
+// });
 //=========ZAPPAR + THREEJS START CODE=========
 const renderer = new _three.WebGLRenderer();
 document.body.appendChild(renderer.domElement);
@@ -932,7 +934,7 @@ function handleMiss() {
         soundMiss.play();
         // Show missed UI if not last life
         if (currentLives > 0) showMissedUI();
-        if (currentLives <= 0) displayGameOverModal(score);
+        if (currentLives <= 2) displayGameOverModal(score);
         else // Reset the ball position after a delay
         setTimeout(()=>{
             moveBallToInitialPosition();
@@ -972,12 +974,12 @@ function render() {
         // const goalPostBoundingBox = new THREE.Box3().setFromObject(goalPostModel);
         // const expansionAmount = 1.4; // Adjust this value as needed
         // goalPostBoundingBox.expandByScalar(expansionAmount);
-        if (playerDistance < 2.9) {
+        if (playerDistance < 3.9) {
             // Player catches the ball
             ballCollisionDetected = true;
             ballShooted = true;
             handleMiss();
-        } else if (goalDistance < 4.5) {
+        } else if (goalDistance < 4.2) {
             ballCollisionDetected = true;
             ballShooted = true;
             handleScore();
@@ -1035,12 +1037,13 @@ function displayGameOverModal(finalScore) {
         console.error("Game Over Modal element not found");
         return;
     }
-    const gameOverScore = document.getElementById("gameOverScore");
-    if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
     speedControlBar.style.visibility = "hidden";
     missedUI.style.visibility = "hidden";
     scoreUI.style.visibility = "hidden";
     livesContainer.style.visibility = "hidden";
+    blackBackground.style.visibility = "hidden";
+    const gameOverScore = document.getElementById("gameOverScore");
+    if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
     gameOverModal.show();
 }
 
