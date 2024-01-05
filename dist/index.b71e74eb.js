@@ -564,6 +564,12 @@ let goalPostModel;
 let hasPlaced = false;
 let ballShooted = false;
 let ballCollisionDetected = false;
+//============WINDOW REDIRECT============
+window.addEventListener("beforeunload", function(e) {
+    e.preventDefault();
+    e.returnValue = "";
+    window.location.href = "/instructions.html";
+});
 //=========ZAPPAR + THREEJS START CODE=========
 const renderer = new _three.WebGLRenderer();
 document.body.appendChild(renderer.domElement);
@@ -581,9 +587,6 @@ _zapparThreejs.permissionRequestUI().then((granted)=>{
     if (granted) camera.start();
     else _zapparThreejs.permissionDeniedUI();
 });
-window.onbeforeunload = function(e) {
-    location.href = "/instructions.html";
-};
 const tracker = new _zapparThreejs.InstantWorldTracker();
 const trackerGroup = new _zapparThreejs.InstantWorldAnchorGroup(camera, tracker);
 scene.add(trackerGroup);
@@ -738,19 +741,18 @@ blackBackground.style.position = "absolute";
 blackBackground.style.bottom = "50%";
 blackBackground.style.left = "50%";
 blackBackground.style.transform = "translate(-50%, 50%)";
-blackBackground.style.width = "150px";
+// blackBackground.style.width = "150px";
 // blackBackground.style.padding = "10px";
 blackBackground.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
 blackBackground.style.color = "#fff";
 blackBackground.style.fontSize = "24px"; // Set the font size
-blackBackground.style.textAlign = "center"; // Center the text
-blackBackground.style.lineHeight = "45px"; // Set the line height for vertical centering
+blackBackground.style.lineHeight = "30px"; // Set the line height for vertical centering
 blackBackground.style.paddingLeft = "10px";
 blackBackground.style.paddingRight = "10px";
 blackBackground.style.borderRadius = "5px";
 blackBackground.style.display = "none";
 blackBackground.style.alignItems = "center";
-blackBackground.style.margin = "0";
+blackBackground.style.margin = "0px";
 document.body.appendChild(blackBackground);
 //=========SCORE-UI=========
 let score = 0;
@@ -764,8 +766,9 @@ scoreUI.style.textAlign = "center"; // Center the text
 document.body.appendChild(scoreUI);
 // Function to show scored UI
 function showScoredUI() {
-    blackBackground.textContent = `Scored : ${score}`;
     blackBackground.style.display = "flex";
+    blackBackground.style.textAlign = "center"; // Center the text
+    blackBackground.textContent = `Scored : ${score}`;
     setTimeout(()=>{
         blackBackground.style.display = "none";
         blackBackground.textContent = "";
@@ -782,8 +785,9 @@ missedUI.style.textAlign = "center"; // Center the text
 document.body.appendChild(missedUI);
 // Function to show missed UI
 function showMissedUI() {
-    blackBackground.textContent = "Missed";
     blackBackground.style.display = "flex";
+    blackBackground.style.textAlign = "center"; // Center the text
+    blackBackground.textContent = "Missed";
     setTimeout(()=>{
         blackBackground.style.display = "none";
         blackBackground.textContent = "";
@@ -928,7 +932,7 @@ function handleMiss() {
         soundMiss.play();
         // Show missed UI if not last life
         if (currentLives > 0) showMissedUI();
-        if (currentLives <= 2) displayGameOverModal(score);
+        if (currentLives <= 0) displayGameOverModal(score);
         else // Reset the ball position after a delay
         setTimeout(()=>{
             moveBallToInitialPosition();
