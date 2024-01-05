@@ -581,6 +581,9 @@ _zapparThreejs.permissionRequestUI().then((granted)=>{
     if (granted) camera.start();
     else _zapparThreejs.permissionDeniedUI();
 });
+window.onbeforeunload = function(e) {
+    location.href = "/instructions.html";
+};
 const tracker = new _zapparThreejs.InstantWorldTracker();
 const trackerGroup = new _zapparThreejs.InstantWorldAnchorGroup(camera, tracker);
 scene.add(trackerGroup);
@@ -747,6 +750,7 @@ blackBackground.style.paddingRight = "10px";
 blackBackground.style.borderRadius = "5px";
 blackBackground.style.display = "none";
 blackBackground.style.alignItems = "center";
+blackBackground.style.margin = "0";
 document.body.appendChild(blackBackground);
 //=========SCORE-UI=========
 let score = 0;
@@ -760,7 +764,7 @@ scoreUI.style.textAlign = "center"; // Center the text
 document.body.appendChild(scoreUI);
 // Function to show scored UI
 function showScoredUI() {
-    blackBackground.textContent = `Scored! : ${score}`;
+    blackBackground.textContent = `Scored : ${score}`;
     blackBackground.style.display = "flex";
     setTimeout(()=>{
         blackBackground.style.display = "none";
@@ -778,7 +782,7 @@ missedUI.style.textAlign = "center"; // Center the text
 document.body.appendChild(missedUI);
 // Function to show missed UI
 function showMissedUI() {
-    blackBackground.textContent = "Missed!";
+    blackBackground.textContent = "Missed";
     blackBackground.style.display = "flex";
     setTimeout(()=>{
         blackBackground.style.display = "none";
