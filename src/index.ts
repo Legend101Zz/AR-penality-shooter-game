@@ -38,7 +38,7 @@ let ballCollisionDetected = false;
 
 window.onbeforeunload = function () {
   window.setTimeout(function () {
-    window.location = "/index.html";
+    window.location.assign("/index.html");
   }, 0);
   window.onbeforeunload = null; // necessary to prevent infinite loop, that kills your browser
 };
@@ -61,7 +61,7 @@ ZapparThree.glContextSet(renderer.getContext());
 const scene = new THREE.Scene();
 scene.background = camera.backgroundTexture;
 
-ZapparThree.permissionRequestUI().then((granted) => {
+ZapparThree.permissionRequestUI().then((granted: any) => {
   if (granted) camera.start();
   else ZapparThree.permissionDeniedUI();
 });

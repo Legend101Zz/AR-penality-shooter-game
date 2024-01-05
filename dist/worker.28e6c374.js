@@ -540,7 +540,7 @@ const ctx = self;
 });
 let launchHandler = (evt)=>{
     if (evt && evt.data && evt.data.t === "wasm") {
-        let url = location.href.startsWith("blob") ? evt.data.url : new URL(require("5969b562fe02b619")).toString();
+        let url = location.href.startsWith("blob") ? evt.data.url : new URL(require("45aeb1fae3a8e76f")).toString();
         (0, _workerServer.launchWorkerServer)(url);
         ctx.removeEventListener("message", launchHandler);
     }
@@ -550,7 +550,7 @@ ctx.addEventListener("message", (evt)=>{
     (0, _workerServer.messageManager).postIncomingMessage(evt.data);
 });
 
-},{"./worker-server":"4vjJx","5969b562fe02b619":"1YY4N"}],"4vjJx":[function(require,module,exports) {
+},{"./worker-server":"4vjJx","45aeb1fae3a8e76f":"1YY4N"}],"4vjJx":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "messageManager", ()=>messageManager);
