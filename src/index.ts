@@ -512,7 +512,7 @@ function handleMiss() {
     // Show missed UI if not last life
     if (currentLives > 0) showMissedUI();
 
-    if (currentLives <= 2) {
+    if (currentLives <= 0) {
       displayGameOverModal(score);
     } else {
       // Reset the ball position after a delay
