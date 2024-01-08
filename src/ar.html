@@ -61,7 +61,7 @@
 
       .modal-footer {
         text-align: center;
-        background-color: #ffc107; /* Primary color */
+        background-color: #343a40; /* Primary color */
         border-radius: 0 0 15px 15px;
       }
 
@@ -80,6 +80,7 @@
       #gameOverModal .modal-body {
         text-align: center;
       }
+
       #gameOverScore {
         font-size: 28px;
         font-weight: bold;
@@ -88,11 +89,11 @@
       }
 
       #playEnded {
-        padding: 12px 16px;
+        padding: 12px 24px;
         font-size: 20px;
         font-weight: bold;
         color: #343a40; /* Dark background color */
-        background-color: #fff; /* Primary color */
+        background-color: #ffc107; /* Primary color */
         border: none;
         border-radius: 8px;
         cursor: pointer;
@@ -100,6 +101,22 @@
       }
 
       #playEnded:hover {
+        background-color: #ffca28; /* Primary color - lighter shade */
+      }
+
+      #startGameButton {
+        padding: 12px 24px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #343a40; /* Dark background color */
+        background-color: #ffc107; /* Primary color */
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      #startGameButton:hover {
         background-color: #ffca28; /* Primary color - lighter shade */
       }
     </style>
@@ -142,7 +159,6 @@
     </div>
     <div id="zappar-placement-ui">
       START GAME
-
       <div
         id="gameOverModal"
         class="modal fade"
@@ -160,12 +176,11 @@
               <h3 class="text-center">Game Over!</h3>
               <p id="gameOverScore" class="text-center"></p>
             </div>
-
             <div class="modal-footer">
               <button
                 type="button"
                 id="playEnded"
-                class="btn btn-danger"
+                class="btn btn-primary"
                 data-bs-dismiss="modal"
               >
                 Try Again
