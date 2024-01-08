@@ -83,32 +83,16 @@ ul li:before {
 #playEnded {
   color: #343a40;
   cursor: pointer;
-  background-color: #ffc107;
+  background-color: #fff;
   border: none;
   border-radius: 8px;
-  padding: 12px 24px;
+  padding: 12px 16px;
   font-size: 20px;
   font-weight: bold;
   transition: background-color .3s;
 }
 
 #playEnded:hover {
-  background-color: #ffca28;
-}
-
-#startGameButton {
-  color: #343a40;
-  cursor: pointer;
-  background-color: #ffc107;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 20px;
-  font-weight: bold;
-  transition: background-color .3s;
-}
-
-#startGameButton:hover {
   background-color: #ffca28;
 }
 
@@ -139,7 +123,7 @@ ul li:before {
             </div>
 
             <div class="modal-footer">
-              <button type="button" id="playEnded" class="btn btn-primary" data-bs-dismiss="modal">
+              <button type="button" id="playEnded" class="btn btn-danger" data-bs-dismiss="modal">
                 Try Again
               </button>
             </div>

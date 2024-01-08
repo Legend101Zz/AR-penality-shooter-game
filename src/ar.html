@@ -88,11 +88,11 @@
       }
 
       #playEnded {
-        padding: 12px 24px;
+        padding: 12px 16px;
         font-size: 20px;
         font-weight: bold;
         color: #343a40; /* Dark background color */
-        background-color: #ffc107; /* Primary color */
+        background-color: #fff; /* Primary color */
         border: none;
         border-radius: 8px;
         cursor: pointer;
@@ -100,22 +100,6 @@
       }
 
       #playEnded:hover {
-        background-color: #ffca28; /* Primary color - lighter shade */
-      }
-
-      #startGameButton {
-        padding: 12px 24px;
-        font-size: 20px;
-        font-weight: bold;
-        color: #343a40; /* Dark background color */
-        background-color: #ffc107; /* Primary color */
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
-
-      #startGameButton:hover {
         background-color: #ffca28; /* Primary color - lighter shade */
       }
     </style>
@@ -181,7 +165,7 @@
               <button
                 type="button"
                 id="playEnded"
-                class="btn btn-primary"
+                class="btn btn-danger"
                 data-bs-dismiss="modal"
               >
                 Try Again

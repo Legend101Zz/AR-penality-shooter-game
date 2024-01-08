@@ -352,8 +352,8 @@ livesContainer.style.right = "10px";
 livesContainer.style.fontSize = "24px";
 livesContainer.style.display = "none";
 
-const maxLives = 3;
-let currentLives = 3;
+const maxLives = 1;
+let currentLives = 1;
 
 for (let i = 0; i < maxLives; i++) {
   const heart = document.createElement("span");
