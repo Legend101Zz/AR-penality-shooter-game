@@ -23,13 +23,18 @@
 .modal-header {
   color: #343a40;
   background-color: #ffc107;
-  border-radius: 5px;
+  border-radius: 15px 15px 0 0;
 }
 
 .modal-title {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 90%;
+  margin: 0 auto;
   padding: 10px;
   font-size: 28px;
   font-weight: bold;
+  overflow: hidden;
 }
 
 .modal-body {
@@ -40,7 +45,7 @@
 #startGameModal {
   height: 100vh;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   display: flex;
 }
 
@@ -55,14 +60,69 @@
   background-color: #ffc107;
   border: none;
   border-radius: 8px;
+  margin: 20px auto 0;
   padding: 12px 24px;
   font-size: 20px;
   font-weight: bold;
   transition: background-color .3s;
+  display: block;
 }
 
 #startGameButton:hover {
   background-color: #ffca28;
+}
+
+@media (max-width: 768px) {
+  .modal-title {
+    font-size: 24px;
+  }
+
+  .modal-body {
+    font-size: 14px;
+  }
+
+  #startGameButton {
+    padding: 10px 20px;
+    font-size: 18px;
+  }
+}
+
+#gameOverModal .modal-dialog {
+  width: 80%;
+  margin: auto;
+}
+
+#gameOverModal .modal-body {
+  text-align: center;
+  padding: 20px;
+}
+
+#gameOverScore {
+  color: #ffc107;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+#playEnded {
+  color: #343a40;
+  cursor: pointer;
+  background-color: #ffc107;
+  border: none;
+  border-radius: 8px;
+  margin: 20px auto 0;
+  padding: 12px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  transition: background-color .3s;
+  display: block;
+}
+
+#playEnded:hover {
+  background-color: #ffca28;
+}
+
+#gameOverModal .modal-content {
+  border: none;
 }
 
 </style>
@@ -104,6 +164,26 @@
                 Start Game
               </button>
             </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" style="display: none">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Game Over</h5>
+          </div>
+          <div class="modal-body">
+            <h3 class="text-center">Game Over!</h3>
+            <p class="text-center" id="gameOverScore"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="playEnded" class="btn btn-primary" data-bs-dismiss="modal">
+              Try Again
+            </button>
           </div>
         </div>
       </div>

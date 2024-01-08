@@ -608,25 +608,20 @@ const pointMaterial = new _three.MeshBasicMaterial({
 const shootingPoint = new _three.Mesh(pointGeometry, pointMaterial);
 // shootingPoint.position.set(-6, -6, 0);
 shootingPoint.visible = false; // Initially invisible
+// FUNCTION TO MOVE THE SHOOTING POINT
 function animateShootingPoint(model) {
-    const animationDuration = 3000; // Time taken for the point to cover the whole goal post
+    const animationDuration = 3000; // Time taken for the point to traverse the goal post
     const startTime = Date.now();
-    // Calculate the center of the goal-post model
-    const goalPostCenter = new _three.Vector3();
     const goalPostDimensions = new _three.Box3().setFromObject(model);
-    goalPostDimensions.getCenter(goalPostCenter);
     function updateAnimation() {
         const currentTime = Date.now();
         const elapsedTime = currentTime - startTime;
         const progress = elapsedTime % animationDuration / animationDuration;
-        const angle = progress * Math.PI * 2; // Full circle in the given duration
-        // Define the radius of the circular motion
-        const radius = Math.min(goalPostDimensions.max.x - goalPostDimensions.min.x, goalPostDimensions.max.y - goalPostDimensions.min.y) / 3;
-        // Calculate the position of the shooting point in a circular motion
-        const x = goalPostCenter.x + radius * Math.cos(angle);
-        const y = goalPostCenter.y + radius * Math.sin(angle);
+        // Calculate the position of the shooting point from left to right
+        const x = goalPostDimensions.min.x + progress * (goalPostDimensions.max.x - goalPostDimensions.min.x) - 15;
+        const y = goalPostDimensions.min.y + 0.5 * (goalPostDimensions.max.y - goalPostDimensions.min.y);
         // Update the position of the shooting point
-        shootingPoint.position.set(0, y - 3.5, x);
+        shootingPoint.position.set(-2, y - 3.5, x + 15);
         requestAnimationFrame(updateAnimation);
     }
     updateAnimation();
