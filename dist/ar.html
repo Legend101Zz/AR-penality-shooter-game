@@ -19,17 +19,21 @@
 
 .modal-header {
   color: #343a40;
+  text-align: center;
   background-color: #ffc107;
+  border-bottom: 1px solid #ddd;
   border-radius: 15px 15px 0 0;
 }
 
 .modal-title {
-  font-size: 28px;
+  padding-top: 20px;
+  font-size: 24px;
   font-weight: bold;
 }
 
 .modal-body {
-  font-size: 10px;
+  padding: 20px;
+  font-size: 18px;
 }
 
 p.highlight {
@@ -74,7 +78,7 @@ ul li:before {
 }
 
 #gameOverScore {
-  color: #ffc107;
+  color: #fff;
   margin: 10px 0;
   font-size: 28px;
   font-weight: bold;
@@ -124,23 +128,21 @@ ul li:before {
     <div id="confetti" style="display: none; position: absolute; top: 30%; left: 10%; transform: translate(-50%, -50%)">
       <img src="/win.c8ea3fa8.png" alt="Confetti" style="width: 250px; height: auto">
     </div>
-    <div id="zappar-placement-ui">
-      START GAME
-      <div id="gameOverModal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" style="display: none">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Game Over</h5>
-            </div>
-            <div class="modal-body">
-              <h3 class="text-center">Game Over!</h3>
-              <p id="gameOverScore" class="text-center"></p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" id="playEnded" class="btn btn-primary" data-bs-dismiss="modal">
-                Try Again
-              </button>
-            </div>
+    <div id="zappar-placement-ui">START GAME</div>
+    <div id="gameOverModal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" style="display: none">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Game Over</h3>
+          </div>
+          <div class="modal-body">
+            <h3 id="gameOverScore" class="text-center">Score</h3>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" id="playEnded" class="btn btn-primary" data-bs-dismiss="modal">
+              Try Again
+            </button>
           </div>
         </div>
       </div>

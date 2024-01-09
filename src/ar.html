@@ -22,15 +22,19 @@
         background-color: #ffc107; /* Primary color */
         color: #343a40; /* Dark background color */
         border-radius: 15px 15px 0 0;
+        border-bottom: 1px solid #ddd;
+        text-align: center;
       }
 
       .modal-title {
-        font-size: 28px;
+        font-size: 24px;
         font-weight: bold;
+        padding-top: 20px;
       }
 
       .modal-body {
-        font-size: 10px;
+        font-size: 18px;
+        padding: 20px;
       }
 
       p.highlight {
@@ -80,11 +84,10 @@
       #gameOverModal .modal-body {
         text-align: center;
       }
-
       #gameOverScore {
         font-size: 28px;
         font-weight: bold;
-        color: #ffc107; /* Primary color */
+        color: #fff; /* Primary color */
         margin: 10px 0; /* Add some margin for spacing */
       }
 
@@ -152,40 +155,38 @@
       "
     >
       <img
-        src="../assets//win.png"
+        src="../assets/win.png"
         alt="Confetti"
         style="width: 250px; height: auto"
       />
     </div>
-    <div id="zappar-placement-ui">
-      START GAME
-      <div
-        id="gameOverModal"
-        class="modal fade"
-        tabindex="-1"
-        data-backdrop="static"
-        data-keyboard="false"
-        style="display: none"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Game Over</h5>
-            </div>
-            <div class="modal-body">
-              <h3 class="text-center">Game Over!</h3>
-              <p id="gameOverScore" class="text-center"></p>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                id="playEnded"
-                class="btn btn-primary"
-                data-bs-dismiss="modal"
-              >
-                Try Again
-              </button>
-            </div>
+    <div id="zappar-placement-ui">START GAME</div>
+    <div
+      id="gameOverModal"
+      class="modal fade"
+      tabindex="-1"
+      data-backdrop="static"
+      data-keyboard="false"
+      style="display: none"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Game Over</h3>
+          </div>
+          <div class="modal-body">
+            <h3 id="gameOverScore" class="text-center">Score</h3>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              id="playEnded"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+            >
+              Try Again
+            </button>
           </div>
         </div>
       </div>
