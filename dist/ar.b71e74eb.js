@@ -804,8 +804,8 @@ livesContainer.style.top = "10px";
 livesContainer.style.right = "10px";
 livesContainer.style.fontSize = "24px";
 livesContainer.style.display = "none";
-const maxLives = 3;
-let currentLives = 3;
+const maxLives = 1;
+let currentLives = 1;
 for(let i = 0; i < maxLives; i++){
     const heart = document.createElement("span");
     heart.className = "heart-icon";
@@ -970,7 +970,7 @@ function render() {
         // const goalPostBoundingBox = new THREE.Box3().setFromObject(goalPostModel);
         // const expansionAmount = 1.4; // Adjust this value as needed
         // goalPostBoundingBox.expandByScalar(expansionAmount);
-        if (playerDistance < 3.9) {
+        if (playerDistance < 2.9) {
             // Player catches the ball
             ballCollisionDetected = true;
             ballShooted = true;
