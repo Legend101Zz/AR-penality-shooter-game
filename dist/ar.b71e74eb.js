@@ -566,6 +566,8 @@ let goalPostModel;
 let hasPlaced = false;
 let ballShooted = false;
 let ballCollisionDetected = false;
+// Add a variable to control whether to render or not
+let shouldRender = true;
 //============WINDOW REDIRECT============
 window.onbeforeunload = function() {
     window.setTimeout(function() {
@@ -804,8 +806,8 @@ livesContainer.style.top = "10px";
 livesContainer.style.right = "10px";
 livesContainer.style.fontSize = "24px";
 livesContainer.style.display = "none";
-const maxLives = 1;
-let currentLives = 1;
+const maxLives = 3;
+let currentLives = 3;
 for(let i = 0; i < maxLives; i++){
     const heart = document.createElement("span");
     heart.className = "heart-icon";
@@ -927,7 +929,7 @@ function handleMiss() {
         // Update the lives UI
         updateLivesUI();
         currentLives--;
-        soundMiss.play();
+        if (shouldRender) soundMiss.play();
         // Show missed UI if not last life
         if (currentLives > 0) showMissedUI();
         if (currentLives <= 0) displayGameOverModal(score);
@@ -941,7 +943,7 @@ function handleMiss() {
 function handleScore() {
     // Increment the score
     score++;
-    soundHit.play();
+    if (shouldRender) soundHit.play();
     updateScoreUI();
     if (currentLives > 0) showScoredUI();
     // soundHit.play();
@@ -958,41 +960,43 @@ function handleScore() {
 }
 // ===RENDER LOOP ======
 function render() {
-    camera.updateFrame(renderer);
-    ballShooted = false;
-    console.log(currentLives);
-    if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, -3, -20);
-    if (goalPostModel && model && !ballCollisionDetected) {
-        // Calculate distances every frame
-        const playerDistance = ball.position.distanceTo(goalkeeper.position);
-        const goalDistance = ball.position.distanceTo(goalPostModel.position);
-        // const goalkeeperBoundingBox = new THREE.Box3().setFromObject(goalkeeper);
-        // const goalPostBoundingBox = new THREE.Box3().setFromObject(goalPostModel);
-        // const expansionAmount = 1.4; // Adjust this value as needed
-        // goalPostBoundingBox.expandByScalar(expansionAmount);
-        if (playerDistance < 2.9) {
-            // Player catches the ball
-            ballCollisionDetected = true;
-            ballShooted = true;
-            handleMiss();
-        } else if (goalDistance < 4.2) {
-            ballCollisionDetected = true;
-            ballShooted = true;
-            handleScore();
+    if (shouldRender) {
+        camera.updateFrame(renderer);
+        ballShooted = false;
+        console.log(currentLives);
+        if (!hasPlaced) tracker.setAnchorPoseFromCameraOffset(0, -3, -20);
+        if (goalPostModel && model && !ballCollisionDetected) {
+            // Calculate distances every frame
+            const playerDistance = ball.position.distanceTo(goalkeeper.position);
+            const goalDistance = ball.position.distanceTo(goalPostModel.position);
+            // const goalkeeperBoundingBox = new THREE.Box3().setFromObject(goalkeeper);
+            // const goalPostBoundingBox = new THREE.Box3().setFromObject(goalPostModel);
+            // const expansionAmount = 1.4; // Adjust this value as needed
+            // goalPostBoundingBox.expandByScalar(expansionAmount);
+            if (playerDistance < 2.9) {
+                // Player catches the ball
+                ballCollisionDetected = true;
+                ballShooted = true;
+                handleMiss();
+            } else if (goalDistance < 4.2) {
+                ballCollisionDetected = true;
+                ballShooted = true;
+                handleScore();
+            }
+        // if (goalPostBoundingBox.containsPoint(ball.position)) {
+        //   // Ball is inside the goal post
+        //   ballCollisionDetected = true;
+        //   ballShooted = true;
+        //   handleScore();
+        // } else if (goalkeeperBoundingBox.containsPoint(ball.position)) {
+        //   // Player catches the ball
+        //   ballCollisionDetected = true;
+        //   ballShooted = true;
+        //   handleMiss();
+        // }
         }
-    // if (goalPostBoundingBox.containsPoint(ball.position)) {
-    //   // Ball is inside the goal post
-    //   ballCollisionDetected = true;
-    //   ballShooted = true;
-    //   handleScore();
-    // } else if (goalkeeperBoundingBox.containsPoint(ball.position)) {
-    //   // Player catches the ball
-    //   ballCollisionDetected = true;
-    //   ballShooted = true;
-    //   handleMiss();
-    // }
+        renderer.render(scene, camera);
     }
-    renderer.render(scene, camera);
 }
 // === Show the instructions modal when the page loads======
 // window.addEventListener("load", () => {
@@ -1028,6 +1032,7 @@ startGameButton.addEventListener("click", ()=>{
 });
 function displayGameOverModal(finalScore) {
     renderer.domElement.remove();
+    shouldRender = false; // Stop rendering
     // Log an error if the modal element is not found
     if (!gameOverModal) {
         console.error("Game Over Modal element not found");
